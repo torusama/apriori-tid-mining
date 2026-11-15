@@ -1,0 +1,13 @@
+name = "FrequentItemsetMining"
+uuid = "66bb89e8-f714-44f3-9411-7292d929a125"
+version = "0.1.0"
+authors = ["Group 17"]
+
+[compat]
+julia = "1.9"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]

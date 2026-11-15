@@ -1,0 +1,9 @@
+# Các tham số dùng chung của đồ án.
+
+[project]
+algorithm = "apriori-tid"
+seed = 42
+
+[mining]
+implementation = "basic"
+minimum_support = 0.4

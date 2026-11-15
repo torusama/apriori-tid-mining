@@ -1,0 +1,25 @@
+# Các thư mục và file tạm của hệ điều hành, editor
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# File cá nhân và thông tin nhạy cảm
+.env
+.env.*
+
+# File tạm của Julia
+.julia/
+*.jl.cov
+*.jl.mem
+
+# Dữ liệu tải về có dung lượng lớn
+*.zip
+*.tar.gz
+data/raw/
+
+# File tạm của notebook
+.ipynb_checkpoints/
+
+# Không bỏ qua Project.toml hoặc Manifest.toml hợp lệ.
+# Không bỏ qua toàn bộ thư mục data/ và result/.
