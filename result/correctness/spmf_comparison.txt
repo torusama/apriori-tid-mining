@@ -1,0 +1,9 @@
+toy_basic.txt | minimum_support=0.4 | exact_match=true
+toy_basic.txt | minimum_support=0.6 | exact_match=true
+toy_identical.txt | minimum_support=1.0 | exact_match=true
+toy_sparse.txt | minimum_support=0.4 | exact_match=true
+toy_sparse.txt | minimum_support=1.0 | exact_match=true
+toy_dense.txt | minimum_support=0.6 | exact_match=true
+toy_boundary.txt | minimum_support=0.4 | exact_match=true
+toy_boundary.txt | minimum_support=0.6 | exact_match=true
+paper_figure3.txt | minimum_support=0.5 | exact_match=true

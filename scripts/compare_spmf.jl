@@ -1,6 +1,5 @@
 using FrequentItemsetMining
 
-
 # So sánh kết quả Apriori-TID của nhóm và SPMF trên một file.
 #
 # Tham số dòng lệnh:

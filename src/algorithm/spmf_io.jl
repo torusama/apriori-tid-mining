@@ -1,5 +1,7 @@
 # Đọc dữ liệu giao dịch từ file văn bản.
 # Mỗi dòng là một giao dịch, các item cách nhau bằng khoảng trắng.
+# Đọc các giao dịch từ file theo định dạng SPMF.
+# Sử dụng open do để bảo đảm file được đóng khi có lỗi.
 function read_transactions(file_path::AbstractString)::Transactions
 
     if !isfile(file_path)
@@ -8,40 +10,43 @@ function read_transactions(file_path::AbstractString)::Transactions
 
     transactions = Transactions()
 
-    for (line_number, line) in enumerate(eachline(file_path))
+    # Julia sẽ tự đóng file sau khi kết thúc khối do,
+    # kể cả khi chương trình phát sinh exception.
+    open(file_path, "r") do input_file
 
-        current_line = strip(line)
+        for (line_number, line) in enumerate(eachline(input_file))
 
-        # Bỏ qua các dòng chú thích của SPMF.
-        if startswith(current_line, "#") ||
-           startswith(current_line, "%") ||
-           startswith(current_line, "@")
-            continue
-        end
+            current_line = strip(line)
 
-        # Mỗi dòng dữ liệu phải chứa ít nhất một item.
-        if isempty(current_line)
-            throw(ArgumentError("Empty transaction at line $(line_number)."))
-        end
-
-        item_ids = Int[]
-
-        # Tách các item trên một dòng.
-        for item_text in split(current_line)
-
-            item_id = tryparse(Int, item_text)
-
-            if item_id === nothing
-                throw(ArgumentError("Invalid item at line $(line_number): $(item_text)"))
+            # Bỏ qua các dòng chú thích.
+            if startswith(current_line, "#") ||
+               startswith(current_line, "%") ||
+               startswith(current_line, "@")
+                continue
             end
 
-            push!(item_ids, item_id)
+            if isempty(current_line)
+                throw(ArgumentError("Empty transaction at line $(line_number)."))
+            end
+
+            item_ids = Int[]
+
+            # Chuyển mỗi mã item từ chuỗi thành số nguyên.
+            for item_text in split(current_line)
+
+                item_id = tryparse(Int, item_text)
+
+                if item_id === nothing
+                    throw(ArgumentError("Invalid item at line $(line_number): $(item_text)"))
+                end
+
+                push!(item_ids, item_id)
+            end
+
+            normalized_transaction = normalize_transaction(item_ids)
+
+            push!(transactions, normalized_transaction)
         end
-
-        # Chuẩn hóa transaction trước khi thêm vào database.
-        normalized_transaction = normalize_transaction(item_ids)
-
-        push!(transactions, normalized_transaction)
     end
 
     validate_transactions(transactions)
