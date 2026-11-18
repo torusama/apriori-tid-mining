@@ -5,7 +5,7 @@
 # implementation: phiên bản thuật toán.
 #
 # :basic     -> Apriori-TID cơ bản.
-# :optimized -> phiên bản tối ưu sẽ viết ở TASK 03.
+# :optimized -> Apriori-TID với ID và chỉ mục tập sinh.
 function mine(
     transactions::Transactions;
     minimum_support::Real = 0.4,
@@ -30,10 +30,8 @@ function mine(
         )
     end
 
-    # Phiên bản tối ưu sẽ được triển khai ở TASK 03.
     if implementation == :optimized
-
-        error("Optimized Apriori-TID has not been implemented yet.")
+        return mine_apriori_tid_optimized(transactions, minimum_support_count)
     end
 
     # Báo lỗi nếu tên phiên bản không hợp lệ.

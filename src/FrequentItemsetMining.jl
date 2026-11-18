@@ -21,8 +21,9 @@ include("algorithm/api.jl")
 # Nạp các hàm so sánh kết quả với SPMF.
 include("evaluation/compare_spmf.jl")
 
-# Phiên bản tối ưu sẽ được bổ sung trong TASK 03.
-# include("algorithm/apriori_tid_optimized.jl")
+include("algorithm/apriori_tid_optimized.jl")
+include("applications/association_rules.jl")
+include("applications/market_basket.jl")
 
 
 # Cho phép các file bên ngoài sử dụng các kiểu dữ liệu.
@@ -46,6 +47,7 @@ export mine
 
 # Cho phép sử dụng các hàm đọc và ghi dữ liệu.
 export read_transactions
+export write_transactions
 export write_itemsets
 export read_itemsets
 

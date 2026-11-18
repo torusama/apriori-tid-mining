@@ -188,3 +188,13 @@ end
         (1, 2, 3) => 1
     )
 end
+# So sánh hai bản trên mọi fixture ở nhiều ngưỡng, kể cả ngưỡng bằng đúng support.
+@testset "TASK 03 - Optimized Apriori-TID" begin
+    for fixture in readdir(joinpath(@__DIR__, "fixtures"); join = true)
+        transactions = read_transactions(fixture)
+        for minimum_support in (0.2, 0.4, 0.5, 0.6, 1.0)
+            @test mine(transactions; minimum_support, implementation = :optimized) ==
+                  mine(transactions; minimum_support, implementation = :basic)
+        end
+    end
+end

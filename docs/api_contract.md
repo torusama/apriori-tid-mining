@@ -27,7 +27,7 @@ mine(transactions; minimum_support=0.4, implementation=:basic)
 
 - `:basic`: basic Apriori-TID implementation (TASK 01).
 - `:optimized`: optimized Apriori-TID implementation (TASK 03).
-- The Base version only validates inputs and raises a clear not-implemented error.
+- Both implementations validate the input and return a `MiningResult` with the same support semantics.
 
 ## SPMF Input and Output (TASK 01)
 

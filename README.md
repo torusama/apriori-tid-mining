@@ -7,8 +7,8 @@
 - **TASK 00:** Kiểu dữ liệu, kiểm tra đầu vào và giao diện chung đã triển khai.
 - **TASK 01:** Apriori-TID cơ bản và đọc/ghi dữ liệu đã triển khai.
 - **TASK 02:** Có bộ kiểm thử và công cụ đối chiếu với SPMF. Kiểm thử tích hợp SPMF cần cài thêm Java và có file `spmf.jar`.
-- **TASK 03:** Phiên bản tối ưu chưa triển khai; chọn `optimized` sẽ báo lỗi.
-- Các phần benchmark và ứng dụng trong cấu trúc dự án hiện vẫn là khung cho các bước tiếp theo.
+- **TASK 03:** Bản `optimized` dùng ID số và chỉ mục tập sinh trong các bản ghi Apriori-TID.
+- **Benchmark và Groceries:** Có script chạy, CSV, biểu đồ và [notebook demo của Phát](notebooks/phat_demo.ipynb).
 
 ## Yêu cầu
 
@@ -52,7 +52,7 @@ Mở `result/basic_output.txt` để xem các tập phổ biến. Thư mục đ�
 | `--input` | Đường dẫn file giao dịch đầu vào. | Có |
 | `--output` | Đường dẫn file kết quả. | Có |
 | `--minsup` | Minimum support dạng tỷ lệ, lớn hơn 0 và không quá 1. Ví dụ `0.6` là 60%. | Có |
-| `--implementation` | Phiên bản thuật toán. Mặc định là `basic`; `optimized` chưa triển khai. | Không |
+| `--implementation` | Chọn `basic` (mặc định) hoặc `optimized`. | Không |
 
 Các tham số được nhập theo cặp tên và giá trị. Đặt đường dẫn trong dấu ngoặc kép nếu đường dẫn có khoảng trắng.
 
@@ -129,6 +129,24 @@ julia --project=. scripts/run_spmf_tests.jl "C:\path\to\spmf.jar"
 
 Lệnh thứ hai ghi báo cáo vào `result/correctness/spmf_comparison.txt`. Kết quả khớp khi không có tập mục thiếu, tập mục thừa hoặc support count khác nhau.
 
+## Tái lập benchmark và Groceries
+
+Chạy các lệnh dưới đây từ thư mục gốc trên macOS hoặc Linux. Cần Julia, Python 3 và Java tương thích với JAR trong `tools/`. Matplotlib dùng để dựng hình từ các CSV đã tạo. Đợt bàn giao chạy với Julia 1.13.4, OpenJDK 27 và SPMF Apriori TID FAST v2.66.
+
+```bash
+python3 -m pip install matplotlib
+python3 scripts/fetch_datasets.py all
+julia --threads=1 --project=. scripts/run_benchmark.jl data/raw/benchmark result/benchmark
+python3 scripts/plot_results.py benchmark result/benchmark
+julia --project=. scripts/run_market_basket.jl data/raw/groceries/Groceries.data data/raw/groceries/Groceries.labels result/market_basket 0.01 0.4
+python3 scripts/plot_results.py groceries result/market_basket
+SPMF_JAR=tools/spmf.jar julia --project=. test/runtests.jl
+```
+
+- Benchmark lấy Chess, Mushroom, Retail và T10I4D100K từ [FIMI](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/). Bộ tải sắp xếp và loại item trùng trong từng giao dịch. Retail và T10I4D100K được cộng 1 vào mọi ID để đáp ứng hợp đồng mã item dương. [Cấu hình benchmark](configs/benchmark.toml) khai báo minsup, seed và số lượt đo. [Kết quả benchmark](result/benchmark/benchmarks.csv) lưu từng phép so sánh và [thông tin môi trường](result/benchmark/environment.txt) mô tả phạm vi đo.
+- Groceries dùng ma trận và bảng nhãn từ arules. Các cột có số lượng dương được ghi nhận một lần trong từng giỏ. Bảng top 10 dùng minsup 1% và minconf 40%. [Nguồn arules](https://github.com/mhahsler/arules/tree/master/data_src/Groceries) · [Bảng top 10](result/market_basket/top10_rules.csv)
+- Notebook chạy được từ repo local bằng kernel Python 3. Khi mở trên Colab, notebook dùng nhánh chứa các file bàn giao và tải Julia nếu cần. Link Colab công khai thuộc bước nộp bài của nhóm. [Kết quả kiểm thử](result/correctness/phat-tests.txt) · [Ghi chú cho báo cáo](docs/phat-results.md)
+
 ## Cấu trúc chính
 
 ```text
@@ -149,5 +167,4 @@ apriori-tid-mining/
 - **`julia` không được nhận diện:** kiểm tra Julia đã cài và nằm trong PATH, sau đó mở lại terminal hoặc VS Code.
 - **Không tìm thấy `Project.toml`, script hoặc file input:** chuyển terminal vào thư mục `apriori-tid-mining` trước khi chạy. Các đường dẫn tương đối trong ví dụ được tính từ thư mục này.
 - **`Minimum support must be greater than 0 and at most 1`:** nhập tỷ lệ như `0.6`, không nhập `60`.
-- **`Optimized Apriori-TID has not been implemented yet`:** dùng `--implementation basic` hoặc bỏ tham số này.
 - **SPMF integration tests skipped:** cài Java, kiểm tra `java -version` và đặt `SPMF_JAR` trỏ đến file JAR hợp lệ.

@@ -55,6 +55,17 @@ function read_transactions(file_path::AbstractString)::Transactions
 end
 
 
+function write_transactions(file_path::AbstractString, transactions::Transactions)
+    validate_transactions(transactions)
+    mkpath(dirname(file_path))
+    open(file_path, "w") do output_file
+        for transaction in transactions
+            println(output_file, join(transaction, ' '))
+        end
+    end
+    return nothing
+end
+
 # Ghi kết quả frequent itemsets ra file theo định dạng SPMF.
 # Ví dụ một dòng: 1 2 #SUP: 3
 function write_itemsets(
