@@ -7,7 +7,8 @@ function run_spmf(
     spmf_jar_path::AbstractString,
     input_path::AbstractString,
     output_path::AbstractString,
-    minimum_support::Real
+    minimum_support::Real;
+    output_stream::IO = stdout
 )::MiningResult
 
     # Kiểm tra file JAR của SPMF.
@@ -58,7 +59,7 @@ function run_spmf(
         # Chạy SPMF với file đầu vào trong thư mục tạm.
         command = `java -jar $spmf_jar_path run Apriori_TID $temporary_input_path $output_path $minimum_support_percentage`
 
-        run(command)
+        run(pipeline(command; stdout = output_stream))
 
         # Kiểm tra SPMF có tạo file kết quả hay không.
         if !isfile(output_path)

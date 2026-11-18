@@ -63,9 +63,9 @@
         implementation = :unknown
     )
 
-    # TASK 03 chưa viết phiên bản optimized.
-    @test_throws ErrorException mine(
+    @test mine(
         [[1, 2]];
+        minimum_support = 1.0,
         implementation = :optimized
-    )
+    ) == expected_results
 end

@@ -15,3 +15,4 @@ include(joinpath(@__DIR__, "..", "tests", "test_io.jl"))
 
 # Chạy kiểm thử công cụ đối chiếu SPMF.
 include(joinpath(@__DIR__, "..", "tests", "test_spmf.jl"))
+include(joinpath(@__DIR__, "..", "tests", "test_market_basket.jl"))

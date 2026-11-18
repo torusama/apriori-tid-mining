@@ -147,6 +147,14 @@ end
 
         @test actual_results[(1, 2)] == 3
 
+        @test main([
+            "--input", input_path,
+            "--output", output_path,
+            "--minsup", "0.6",
+            "--implementation", "optimized"
+        ]) == actual_results
+        @test read_itemsets(output_path) == actual_results
+
         # Thiếu tham số bắt buộc phải báo lỗi.
         @test_throws ArgumentError main([
             "--input", input_path

@@ -77,7 +77,8 @@ end
             ("toy_sparse.txt", 1.0),
             ("toy_dense.txt", 0.6),
             ("toy_boundary.txt", 0.4),
-            ("toy_boundary.txt", 0.6)
+            ("toy_boundary.txt", 0.6),
+            ("paper_figure3.txt", 0.5)
         ]
 
         for (file_name, minimum_support) in test_cases
@@ -112,6 +113,8 @@ end
                 )
 
                 @test comparison.matches
+                optimized_results = mine(transactions; minimum_support, implementation = :optimized)
+                @test compare_results(optimized_results, expected_results).matches
 
             finally
                 if isfile(output_path)
