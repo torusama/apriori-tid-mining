@@ -1,0 +1,4 @@
+minimum_support,absolute_minimum_support,num_transactions,num_patterns,seconds,implementation
+0.7,952,1360,255,3.06268,optimized
+0.8,1088,1360,244,0.0524329,optimized
+0.9,1224,1360,36,0.0070129,optimized

@@ -1,0 +1,4 @@
+minimum_support,absolute_minimum_support,num_transactions,num_patterns,seconds_including_julia_startup,implementation
+0.7,952,1360,255,5.686,optimized
+0.8,1088,1360,160,5.16,optimized
+0.9,1224,1360,102,4.894,optimized

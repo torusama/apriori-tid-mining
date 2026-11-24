@@ -1,4 +1,6 @@
-## Báo cáo
+## Báo cáo — kết quả lịch sử trước chỉnh sửa
+
+Các số liệu dưới đây được giữ nguyên từ lần chạy trước. Cần chạy lại benchmark và kiểm thử trên code mới trước khi dùng làm bằng chứng nộp bài.
 
 ## Chương 1 · Apriori-TID tối ưu
 
@@ -14,7 +16,7 @@ Phép đo dùng máy Apple M5 16 GiB, Julia 1.13.4 một thread, OpenJDK 27 và 
 
 Cả hai bản Julia khớp **100% itemset và support count với SPMF ở cả 20 cấu hình dataset–minsup**. Bảng sau ghi thời gian và peak RSS tại ngưỡng giữa của mỗi dataset. [Biểu đồ runtime](../result/benchmark/runtime_ms.png) · [Biểu đồ peak RSS](../result/benchmark/peak_ram.png)
 
-Ở T10I4D100K với minsup 3,5%, API hiện hành tính ngưỡng 3.501 do làm tròn số thực nhị phân. Kiểm tra thêm với ngưỡng chính xác 3.500 cho cùng 40 itemset và support count.
+Ở T10I4D100K với minsup 3,5%, API trước chỉnh sửa tính ngưỡng 3.501 do làm tròn số thực nhị phân. Ghi chú của lần chạy trước cho biết kiểm tra thêm với ngưỡng chính xác 3.500 cho cùng 40 itemset và support count. Bản chỉnh sửa chuyển tỷ lệ sang phân số chính xác và có test hồi quy mới; chưa chạy lại thực nghiệm.
 
 | Dataset | Minsup giữa | Basic (ms) | Optimized (ms) | SPMF (ms) | Peak RSS basic → optimized (MiB) |
 |---|---:|---:|---:|---:|---:|

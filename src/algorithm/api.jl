@@ -12,9 +12,6 @@ function mine(
     implementation::Symbol = :basic
 )::MiningResult
 
-    # Kiểm tra dữ liệu đầu vào.
-    validate_transactions(transactions)
-
     # Chuyển minimum support từ tỷ lệ sang support count.
     minimum_support_count = calculate_minimum_support_count(
         minimum_support,

@@ -1,8 +1,4 @@
-# Chạy thuật toán Apriori_TID của SPMF bằng Java.
-# SPMF chỉ được dùng để đối chiếu, không thay thế code nhóm.
-# Chạy thuật toán Apriori-TID của SPMF bằng Java.
-# Sao chép file dữ liệu sang thư mục tạm để tránh lỗi
-# Java không đọc đúng đường dẫn chứa ký tự tiếng Việt.
+# Chỉ dùng SPMF làm tham chiếu; Java chạy với đường dẫn tương đối trong thư mục tạm.
 function run_spmf(
     spmf_jar_path::AbstractString,
     input_path::AbstractString,
@@ -10,66 +6,41 @@ function run_spmf(
     minimum_support::Real;
     output_stream::IO = stdout
 )::MiningResult
-
-    # Kiểm tra file JAR của SPMF.
     if !isfile(spmf_jar_path)
-        throw(ArgumentError("SPMF JAR file does not exist: $(spmf_jar_path)"))
+        throw(ArgumentError("SPMF JAR file does not exist: $spmf_jar_path"))
     end
-
-    # Kiểm tra file dữ liệu.
-    if !isfile(input_path)
-        throw(ArgumentError("Input file does not exist: $(input_path)"))
-    end
-
-    # Kiểm tra Java đã được cài đặt.
     if Sys.which("java") === nothing
         throw(ArgumentError("Java is not available on PATH."))
     end
 
-    # Kiểm tra minimum support.
-    calculate_minimum_support_count(minimum_support, 1)
+    transactions = read_transactions(input_path)
+    number_of_transactions = length(transactions)
+    minimum_count = calculate_minimum_support_count(minimum_support, number_of_transactions)
 
-    # Chuyển 0.4 thành "40.0%" để SPMF sử dụng.
-    minimum_support_percentage = string(
-        round(minimum_support * 100; digits = 10),
-        "%"
-    )
-
-    # Tạo thư mục chứa kết quả nếu chưa tồn tại.
+    # SPMF làm tròn ngưỡng tương đối lên. Chọn một giá trị nằm trong khoảng
+    # có cùng support count, tránh sai số ở ranh giới số thực.
+    reference_percentage = string(100 * ((minimum_count - 0.5) / number_of_transactions), "%")
     mkpath(dirname(output_path))
 
-    # Tạo thư mục tạm trong Windows.
-    # Trên máy hiện tại, Julia đang dùng đường dẫn Temp dạng ASCII.
-    return mktempdir() do temporary_directory
+    temporary_root = get(ENV, "SPMF_TEMP_DIR", tempdir())
+    mkpath(temporary_root)
+    return mktempdir(temporary_root) do temporary_directory
+        temporary_jar = joinpath(temporary_directory, "spmf.jar")
+        temporary_input = joinpath(temporary_directory, "input.txt")
+        temporary_output = joinpath(temporary_directory, "output.txt")
+        cp(spmf_jar_path, temporary_jar; force = true)
+        write_transactions(temporary_input, transactions)
 
-        # Tạo đường dẫn file dữ liệu tạm.
-        temporary_input_path = joinpath(
-            temporary_directory,
-            "spmf_input.txt"
-        )
-
-        # Sao chép dữ liệu sang thư mục tạm.
-        # Dữ liệu gốc của project không bị thay đổi.
-        cp(
-            input_path,
-            temporary_input_path;
-            force = true
-        )
-
-        # Chạy SPMF với file đầu vào trong thư mục tạm.
-        command = `java -jar $spmf_jar_path run Apriori_TID $temporary_input_path $output_path $minimum_support_percentage`
-
+        command = Cmd(`java -jar spmf.jar run Apriori_TID input.txt output.txt $reference_percentage`;
+                      dir = temporary_directory)
         run(pipeline(command; stdout = output_stream))
-
-        # Kiểm tra SPMF có tạo file kết quả hay không.
-        if !isfile(output_path)
+        if !isfile(temporary_output)
             error("SPMF did not create an output file.")
         end
 
-        # Đọc kết quả từ file SPMF.
-        spmf_results = read_itemsets(output_path)
-
-        return spmf_results
+        results = read_itemsets(temporary_output)
+        cp(temporary_output, output_path; force = true)
+        return results
     end
 end
 

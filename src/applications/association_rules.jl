@@ -7,20 +7,26 @@ struct AssociationRule
     lift::Rational{Int}
 end
 
-function each_rule_split!(visit, itemset::Itemset, index::Int, left::Vector{Int}, right::Vector{Int})
-    if index > length(itemset)
-        if !isempty(left) && !isempty(right)
-            visit(Tuple(left), Tuple(right))
+# Chia từng item vào một trong hai vế của luật; mỗi vế phải khác rỗng.
+function each_rule_split!(visit_rule, itemset::Itemset, item_position::Int,
+                          antecedent_items::Vector{Int}, consequent_items::Vector{Int})
+    if item_position > length(itemset)
+        if !isempty(antecedent_items) && !isempty(consequent_items)
+            visit_rule(Tuple(antecedent_items), Tuple(consequent_items))
         end
         return
     end
 
-    push!(left, itemset[index])
-    each_rule_split!(visit, itemset, index + 1, left, right)
-    pop!(left)
-    push!(right, itemset[index])
-    each_rule_split!(visit, itemset, index + 1, left, right)
-    pop!(right)
+    item = itemset[item_position]
+    # Nhánh 1: đưa item hiện tại vào vế trái.
+    push!(antecedent_items, item)
+    each_rule_split!(visit_rule, itemset, item_position + 1, antecedent_items, consequent_items)
+    pop!(antecedent_items)
+
+    # Nhánh 2: đưa item hiện tại vào vế phải.
+    push!(consequent_items, item)
+    each_rule_split!(visit_rule, itemset, item_position + 1, antecedent_items, consequent_items)
+    pop!(consequent_items)
     return
 end
 

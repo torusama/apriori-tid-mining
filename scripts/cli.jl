@@ -10,40 +10,32 @@ using FrequentItemsetMining
 # --implementation basic
 function parse_arguments(arguments::Vector{String})
 
-    # Các tham số được nhập theo từng cặp tên và giá trị.
-    if length(arguments) % 2 != 0
-        throw(ArgumentError("Every option must have a value."))
-    end
-
     options = Dict{String, String}()
+    argument_index = 1
+    supported_options = ("--input", "--output", "--minsup", "--implementation")
 
-    for argument_index in 1:2:length(arguments)
-
-        option_name = arguments[argument_index]
-        option_value = arguments[argument_index + 1]
-
-        # Chỉ chấp nhận những tham số mà chương trình hỗ trợ.
-        if !(option_name in (
-            "--input",
-            "--output",
-            "--minsup",
-            "--implementation"
-        ))
-            throw(ArgumentError("Unknown option: $(option_name)"))
-        end
-
-        options[option_name] = option_value
-    end
-
-    # Kiểm tra các tham số bắt buộc.
-    required_options = ["--input", "--output", "--minsup"]
-
-    for required_option in required_options
-
-        if !haskey(options, required_option)
-            throw(ArgumentError("Missing required option: $(required_option)"))
+    while argument_index <= length(arguments)
+        argument = arguments[argument_index]
+        if startswith(argument, "--")
+            argument in supported_options || throw(ArgumentError("Unknown option: $argument"))
+            argument_index < length(arguments) || throw(ArgumentError("Missing value for $argument"))
+            value = arguments[argument_index + 1]
+            startswith(value, "--") && throw(ArgumentError("Missing value for $argument"))
+            haskey(options, argument) && throw(ArgumentError("Duplicate option: $argument"))
+            options[argument] = value
+            argument_index += 2
+        else
+            # Hỗ trợ đường dẫn input trực tiếp như ví dụ trong đề.
+            haskey(options, "--input") && throw(ArgumentError("Only one input file is allowed."))
+            options["--input"] = argument
+            argument_index += 1
         end
     end
+
+    for required_option in ("--input", "--minsup")
+        haskey(options, required_option) || throw(ArgumentError("Missing required option: $required_option"))
+    end
+    get!(options, "--output", "result/output.txt")
 
     return options
 end
@@ -51,6 +43,12 @@ end
 
 # Hàm chính dùng để chạy thuật toán từ terminal.
 function main(arguments::Vector{String} = ARGS)
+
+    if arguments == ["--help"] || arguments == ["-h"]
+        println("Usage: julia --project=. demo.jl --minsup 0.6 data/toy/sample.txt [--output result/output.txt] [--implementation basic|optimized]")
+        println("The --input FILE form is also supported. Default output: result/output.txt.")
+        return nothing
+    end
 
     options = parse_arguments(arguments)
 

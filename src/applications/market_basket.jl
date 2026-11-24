@@ -1,32 +1,45 @@
-# The arules matrix has one quantity column per label. FIM uses item presence.
+# Mỗi cột của ma trận arules là số lượng sản phẩm. FIM chỉ xét có hay không.
 function read_groceries(data_path::AbstractString, labels_path::AbstractString)
-    column_labels = map(readlines(labels_path)) do line
+    column_labels = String[]
+    for line in readlines(labels_path)
         fields = split(line, '\t'; limit = 3)
-        length(fields) == 3 && !isempty(strip(fields[2])) ||
+        if length(fields) != 3 || isempty(strip(fields[2]))
             throw(ArgumentError("Invalid Groceries label: $(repr(line))."))
-        String(strip(fields[2]))
-    end
-    isempty(column_labels) && throw(ArgumentError("No Groceries labels found."))
-
-    labels = sort!(unique(column_labels))
-    item_ids = Dict(label => id for (id, label) in enumerate(labels))
-    column_ids = [item_ids[label] for label in column_labels]
-    transactions = Transactions()
-    for (row, line) in enumerate(eachline(data_path))
-        values = split(line)
-        length(values) == length(column_ids) ||
-            throw(ArgumentError("Unexpected column count in Groceries row $row."))
-        items = Int[]
-        for (column, value) in enumerate(values)
-            quantity = tryparse(Int, value)
-            if isnothing(quantity) || quantity < 0
-                throw(ArgumentError("Expected a nonnegative quantity in Groceries row $row, column $column."))
-            end
-            if quantity > 0
-                push!(items, column_ids[column])
-            end
         end
-        push!(transactions, normalize_transaction(items))
+        push!(column_labels, String(strip(fields[2])))
+    end
+    if isempty(column_labels)
+        throw(ArgumentError("No Groceries labels found."))
+    end
+
+    # Các cột có cùng tên sản phẩm dùng chung một ID.
+    labels = sort!(unique(column_labels))
+    item_ids = Dict{String, Int}()
+    for (item_id, label) in enumerate(labels)
+        item_ids[label] = item_id
+    end
+    column_ids = Int[]
+    for label in column_labels
+        push!(column_ids, item_ids[label])
+    end
+    transactions = Transactions()
+    open(data_path, "r") do input_file
+        for (row, line) in enumerate(eachline(input_file))
+            values = split(line)
+            length(values) == length(column_ids) ||
+                throw(ArgumentError("Unexpected column count in Groceries row $row."))
+            items = Int[]
+            for (column, value) in enumerate(values)
+                quantity = tryparse(Int, value)
+                if isnothing(quantity) || quantity < 0
+                    throw(ArgumentError("Expected a nonnegative quantity in Groceries row $row, column $column."))
+                end
+                if quantity > 0
+                    push!(items, column_ids[column])
+                end
+            end
+            push!(transactions, normalize_transaction(items))
+        end
     end
     validate_transactions(transactions)
     return transactions, labels
@@ -36,7 +49,7 @@ function write_item_mapping(path::AbstractString, labels::Vector{String})
     open(path, "w") do io
         println(io, "{")
         for (id, label) in enumerate(labels)
-            # Encode control characters using the JSON Unicode escape.
+            # Mã hóa ký tự điều khiển theo định dạng JSON.
             escaped = join(map(collect(label)) do char
                 if char == '"' || char == '\\'
                     string('\\', char)

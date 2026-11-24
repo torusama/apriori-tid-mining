@@ -23,13 +23,7 @@ function main(arguments::Vector{String} = ARGS)
         throw(ArgumentError("Minimum support must be a number."))
     end
 
-    # Chạy thuật toán do nhóm tự cài đặt.
     transactions = read_transactions(input_path)
-
-    actual_results = mine(
-        transactions;
-        minimum_support = minimum_support
-    )
 
     # Tạo file tạm để lưu kết quả của SPMF.
     temporary_output_path = tempname() * ".txt"
@@ -43,16 +37,15 @@ function main(arguments::Vector{String} = ARGS)
             minimum_support
         )
 
-        # So sánh kết quả của hai thuật toán.
-        comparison = compare_results(
-            actual_results,
-            expected_results
-        )
-
-        print_comparison(comparison)
-
-        if !comparison.matches
-            error("Apriori-TID results do not match SPMF.")
+        # Đối chiếu cả hai bản với cùng một kết quả SPMF.
+        for implementation in (:basic, :optimized)
+            actual_results = mine(transactions; minimum_support, implementation)
+            comparison = compare_results(actual_results, expected_results)
+            println("Implementation: $implementation")
+            print_comparison(comparison)
+            if !comparison.matches
+                error("$implementation Apriori-TID results do not match SPMF.")
+            end
         end
 
     finally

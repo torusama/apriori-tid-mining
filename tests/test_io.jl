@@ -155,6 +155,14 @@ end
         ]) == actual_results
         @test read_itemsets(output_path) == actual_results
 
+        # Kiểm tra cú pháp đường dẫn input theo ví dụ của đề.
+        @test main(["--minsup", "0.6", input_path, "--output", output_path,
+                    "--implementation", "optimized"]) == actual_results
+        @test read_itemsets(output_path) == actual_results
+        @test parse_arguments(["--minsup", "0.6", input_path])["--output"] == "result/output.txt"
+        @test_throws ArgumentError parse_arguments(["--minsup", "0.6", input_path, "--input", input_path])
+        @test_throws ArgumentError parse_arguments(["--minsup", "--input", input_path])
+
         # Thiếu tham số bắt buộc phải báo lỗi.
         @test_throws ArgumentError main([
             "--input", input_path

@@ -51,7 +51,7 @@ end
 # Kiểm tra trực tiếp với SPMF nếu đã cấu hình file JAR.
 @testset "TASK 02 - SPMF integration" begin
 
-    spmf_jar_path = get(ENV, "SPMF_JAR", "")
+    spmf_jar_path = "--core-only" in ARGS ? "" : get(ENV, "SPMF_JAR", "")
 
     # Nếu đường dẫn là tương đối thì tính từ thư mục project.
     if !isempty(spmf_jar_path) && !isabspath(spmf_jar_path)
@@ -121,6 +121,19 @@ end
                     rm(output_path)
                 end
             end
+        end
+
+        # Test hồi quy: hai bản Julia và SPMF phải giữ item đạt đúng ngưỡng.
+        mktempdir() do directory
+            input_path = joinpath(directory, "giao dịch.txt")
+            output_path = joinpath(directory, "kết quả.txt")
+            jar_path = joinpath(directory, "tham chiếu.jar")
+            cp(spmf_jar_path, jar_path)
+            transactions = [[1] for transaction_index in 1:3500]
+            append!(transactions, [[2] for transaction_index in 3501:100000])
+            write_transactions(input_path, transactions)
+            expected_results = MiningResult((1,) => 3500, (2,) => 96500)
+            @test run_spmf(jar_path, input_path, output_path, 0.035) == expected_results
         end
 
     else

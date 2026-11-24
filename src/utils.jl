@@ -82,6 +82,37 @@ function calculate_minimum_support_count(
         throw(ArgumentError("Number of transactions must be greater than 0."))
     end
 
-    minimum_support_count = ceil(Int, minimum_support * number_of_transactions)
-    return minimum_support_count
+    # Đổi số thập phân thành phân số chính xác trước khi nhân.
+    # Ví dụ: 0.035 thành 35/1000, tránh sai số nhị phân.
+    if minimum_support isa AbstractFloat
+        decimal_parts = split(lowercase(string(minimum_support)), 'e')
+        decimal_text = decimal_parts[1]
+        exponent = 0
+        if length(decimal_parts) == 2
+            exponent = parse(Int, decimal_parts[2])
+        end
+        number_parts = split(decimal_text, '.')
+        fractional_digits = 0
+        if length(number_parts) == 2
+            fractional_digits = length(number_parts[2])
+        end
+        numerator = parse(BigInt, join(number_parts))
+        decimal_places = fractional_digits - exponent
+        if decimal_places >= 0
+            exact_support = numerator // (big(10)^decimal_places)
+        else
+            exact_support = numerator * big(10)^(-decimal_places) // 1
+        end
+    else
+        exact_support = Rational{BigInt}(minimum_support)
+    end
+    return ceil(Int, exact_support * number_of_transactions)
+end
+
+# Kiểm tra dữ liệu và ngưỡng đếm cho cả Basic và Optimized.
+function validate_mining_input(transactions::Transactions, minimum_support_count::Int)
+    validate_transactions(transactions)
+    if minimum_support_count < 1 || minimum_support_count > length(transactions)
+        throw(ArgumentError("Minimum support count is out of range."))
+    end
 end

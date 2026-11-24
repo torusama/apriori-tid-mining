@@ -198,3 +198,30 @@ end
         end
     end
 end
+
+
+# Đếm trực tiếp trên dữ liệu nhỏ để kiểm tra độc lập với hai bản Apriori-TID.
+@testset "Independent support counts" begin
+    transactions = [[1, 2, 3], [1, 3, 4], [2, 3], [1, 2, 4], [4]]
+    expected = MiningResult()
+    subsets = Itemset[(1,), (2,), (3,), (4,),
+        (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4),
+        (1, 2, 3), (1, 2, 4), (1, 3, 4), (2, 3, 4), (1, 2, 3, 4)]
+    for items in subsets
+        support_count = 0
+        for transaction in transactions
+            if all(item -> item in transaction, items)
+                support_count += 1
+            end
+        end
+        if support_count >= 2
+            expected[items] = support_count
+        end
+    end
+    for implementation in (:basic, :optimized)
+        @test mine(transactions; minimum_support = 0.4, implementation) == expected
+        @test_throws ArgumentError mine([[2, 1]]; minimum_support = 0.4, implementation)
+    end
+    @test_throws ArgumentError FrequentItemsetMining.mine_apriori_tid_optimized([[1]], 0)
+    @test_throws ArgumentError FrequentItemsetMining.mine_apriori_tid_optimized([[1]], 2)
+end

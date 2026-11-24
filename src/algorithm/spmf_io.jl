@@ -107,50 +107,52 @@ function read_itemsets(file_path::AbstractString)::MiningResult
 
     frequent_itemsets = MiningResult()
 
-    for (line_number, line) in enumerate(eachline(file_path))
+    open(file_path, "r") do input_file
+        for (line_number, line) in enumerate(eachline(input_file))
 
-        current_line = strip(line)
+            current_line = strip(line)
 
-        # File kết quả rỗng là trường hợp hợp lệ.
-        if isempty(current_line)
-            continue
-        end
-
-        # Tách itemset và support tại chuỗi #SUP:.
-        line_parts = split(current_line, "#SUP:")
-
-        if length(line_parts) != 2
-            throw(ArgumentError("Invalid itemset result at line $(line_number)."))
-        end
-
-        item_ids = Int[]
-
-        # Đọc danh sách item của itemset.
-        for item_text in split(strip(line_parts[1]))
-
-            item_id = tryparse(Int, item_text)
-
-            if item_id === nothing
-                throw(ArgumentError("Invalid itemset at line $(line_number)."))
+            # File kết quả rỗng là trường hợp hợp lệ.
+            if isempty(current_line)
+                continue
             end
 
-            push!(item_ids, item_id)
+            # Tách itemset và support tại chuỗi #SUP:.
+            line_parts = split(current_line, "#SUP:")
+
+            if length(line_parts) != 2
+                throw(ArgumentError("Invalid itemset result at line $(line_number)."))
+            end
+
+            item_ids = Int[]
+
+            # Đọc danh sách item của itemset.
+            for item_text in split(strip(line_parts[1]))
+
+                item_id = tryparse(Int, item_text)
+
+                if item_id === nothing
+                    throw(ArgumentError("Invalid itemset at line $(line_number)."))
+                end
+
+                push!(item_ids, item_id)
+            end
+
+            itemset = Tuple(normalize_transaction(item_ids))
+
+            # Đọc support count.
+            support_count = tryparse(Int, strip(line_parts[2]))
+
+            if support_count === nothing || support_count <= 0
+                throw(ArgumentError("Invalid support at line $(line_number)."))
+            end
+
+            if haskey(frequent_itemsets, itemset)
+                throw(ArgumentError("Duplicate itemset at line $(line_number)."))
+            end
+
+            frequent_itemsets[itemset] = support_count
         end
-
-        itemset = Tuple(normalize_transaction(item_ids))
-
-        # Đọc support count.
-        support_count = tryparse(Int, strip(line_parts[2]))
-
-        if support_count === nothing || support_count <= 0
-            throw(ArgumentError("Invalid support at line $(line_number)."))
-        end
-
-        if haskey(frequent_itemsets, itemset)
-            throw(ArgumentError("Duplicate itemset at line $(line_number)."))
-        end
-
-        frequent_itemsets[itemset] = support_count
     end
 
     return frequent_itemsets

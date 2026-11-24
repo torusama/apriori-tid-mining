@@ -1,0 +1,6 @@
+[deps]
+Clustering = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
+FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
+ImageFeatures = "92ff4b2b-8094-53d3-b29d-97f740f06cef"
+ImageIO = "82e4d734-157c-48bb-816b-45c225c6df19"
+ImageTransformations = "02fcd773-0e25-5acc-982a-7f6622650795"

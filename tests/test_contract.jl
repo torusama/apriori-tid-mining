@@ -69,3 +69,17 @@
         implementation = :optimized
     ) == expected_results
 end
+
+@testset "Exact minimum support boundary" begin
+    @test calculate_minimum_support_count(0.035, 100000) == 3500
+    @test calculate_minimum_support_count(0.03500000000000001, 100000) == 3501
+    @test calculate_minimum_support_count(1e-8, 100000) == 1
+    @test calculate_minimum_support_count(7//200, 100000) == 3500
+    @test calculate_minimum_support_count(0.14, 100) == 14
+    transactions = [[1] for transaction_index in 1:3500]
+    append!(transactions, [[2] for transaction_index in 3501:100000])
+    for implementation in (:basic, :optimized)
+        results = mine(transactions; minimum_support = 0.035, implementation = implementation)
+        @test results == MiningResult((1,) => 3500, (2,) => 96500)
+    end
+end

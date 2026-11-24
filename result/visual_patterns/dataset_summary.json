@@ -1,0 +1,41 @@
+{
+  "source_url": "https://www.robots.ox.ac.uk/~vgg/data/flowers/17/17flowers.tgz",
+  "archive_sha256": "fe38a60f8b4a95e657551247d3e7d799a3fafcdbc595be504b12839967823d70",
+  "run_utc": "2026-11-23T15:06:18.155862+00:00",
+  "images": 1360,
+  "valid_images": 1360,
+  "unreadable_images": 0,
+  "empty_transactions": 0,
+  "total_descriptors": 136190,
+  "training_descriptors": 48960,
+  "training_images": 1360,
+  "mean_unique_words": 7.686029411764705,
+  "seed": 42,
+  "maximum_side": 512,
+  "sift_nfeatures": 100,
+  "visual_words": 8,
+  "kmeans": "MiniBatchKMeans(n_init=3, max_iter=100, batch_size=1024)",
+  "versions": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "opencv": "5.0.0",
+    "numpy": "2.2.1",
+    "scikit_learn": "1.8.0"
+  },
+  "num_descriptors_min_mean_max": [
+    63,
+    100.13970588235294,
+    102
+  ],
+  "height_min_mean_max": [
+    499,
+    555.4154411764706,
+    1093
+  ],
+  "width_min_mean_max": [
+    499,
+    583.3661764705882,
+    1057
+  ],
+  "minimum_unique_words": 3,
+  "maximum_unique_words": 8
+}
