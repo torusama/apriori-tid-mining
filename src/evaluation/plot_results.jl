@@ -11,13 +11,21 @@ function plot_benchmark_series(rows, horizontal_field, vertical_field, implement
                                title_text = "", horizontal_label = "", vertical_label = "",
                                reverse_axis = false)
     figure = plot(title = title_text, xlabel = horizontal_label, ylabel = vertical_label,
-                  xflip = reverse_axis, legend = :best, grid = true)
+                  xflip = reverse_axis, legend = :topleft, grid = true)
     for implementation in implementations
         selected_rows = filter(row -> row.implementation == implementation, rows)
         horizontal_values = [getproperty(row, horizontal_field) for row in selected_rows]
         vertical_values = [getproperty(row, vertical_field) for row in selected_rows]
         plot!(figure, horizontal_values, vertical_values; label = implementation,
               marker = :circle, linewidth = 2)
+    end
+    if vertical_field == :runtime_ms && all(row -> row.runtime_ms > 0, rows)
+        plot!(figure; yscale = :log10)
+    end
+    if horizontal_field == :minsup
+        thresholds = sort!(unique([row.minsup for row in rows]))
+        labels = [string(round(100 * threshold; digits = 3), "%") for threshold in thresholds]
+        plot!(figure; xticks = (thresholds, labels))
     end
     return figure
 end
@@ -78,7 +86,8 @@ function groceries_plots(directory)
     lift_values = [row.lift for row in rules]
     rule_figure = bar(1:length(rules), lift_values; orientation = :horizontal,
         yticks = (1:length(rules), rule_labels), yflip = true, xlabel = "Lift",
-        legend = false, size = (1200, 600), left_margin = 65 * Plots.mm)
+        xlims = (0, 1.15 * maximum(lift_values)), ylims = (0.3, length(rules) + 0.7),
+        legend = false, size = (1200, 650), left_margin = 85 * Plots.mm)
     vline!(rule_figure, [1]; label = "", linestyle = :dash)
     savefig(rule_figure, joinpath(directory, "top10_rules.png"))
 end

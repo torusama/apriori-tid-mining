@@ -1,7 +1,7 @@
 name = "FrequentItemsetMining"
 uuid = "66bb89e8-f714-44f3-9411-7292d929a125"
 version = "0.1.0"
-authors = ["Group 17"]
+authors = ["Võ Tấn An - 24127318", "Trịnh Tấn Phát - 24127485"]
 
 [compat]
 julia = "1.9"

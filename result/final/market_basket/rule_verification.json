@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "transactions": 9835,
+  "rules_verified": 62,
+  "top10_matches_ranked_rules": true,
+  "method": "Recount antecedent, consequent and union directly from saved transactions; independently recompute support, confidence and lift; relative tolerance 1e-12.",
+  "input_sha256": {
+    "groceries_spmf.txt": "4760f4b207d93e173613a7aba04beb13a9152b798e0e50ba425201dca74d0fb0",
+    "item_mapping.json": "9c8af614cf8c198ca32111a71449757182d221a8338ba946e70d92f49b6eb624",
+    "rules.csv": "3336d52ab69039320b868079b63c6bcd3fa0debeb2841914df34be1487edb4af",
+    "top10_rules.csv": "ddcd9c4a4188648e3f05dec8a73c1dc8d895c32aba8f55a7b1ce5f784bde4ecf"
+  }
+}

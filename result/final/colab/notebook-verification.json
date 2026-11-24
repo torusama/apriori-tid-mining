@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "code_cells": 10,
+  "cells_with_outputs": 10,
+  "error_outputs": 0,
+  "source_notebook": "notebooks/demo.ipynb",
+  "source_sha256": "6296476d3b961a17ba2d5a20d97ae1f85956a21c580a58fa0def4cd2d0d26937",
+  "executed_notebook_sha256": "6e0a96d54801e3820d38d58ac99ae7d236c5991bdbe202a5391fa0bb10aaee95",
+  "cli_version": "0.7.5",
+  "execution_count_note": "Colab CLI leaves execution_count null; sequential execution is evidenced by 10/10 log markers and saved outputs for every code cell.",
+  "fresh_kernel": true,
+  "full_benchmark_remeasured": false,
+  "runtime": "dedicated Colab CPU Standard",
+  "uploaded_working_tree": true
+}

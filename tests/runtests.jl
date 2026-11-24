@@ -3,7 +3,7 @@ using FrequentItemsetMining
 
 project_directory = dirname(@__DIR__)
 if !(isempty(ARGS) || ARGS == ["--core-only"])
-    error("Usage: julia --project=. test/runtests.jl [--core-only]")
+    error("Usage: julia --project=. tests/runtests.jl [--core-only]")
 end
 core_only = ARGS == ["--core-only"]
 if core_only
@@ -21,21 +21,21 @@ else
 end
 
 # Chạy kiểm thử các hàm Base của TASK 00.
-include(joinpath(@__DIR__, "..", "tests", "test_contract.jl"))
+include(joinpath(@__DIR__, "test_contract.jl"))
 
 # Chạy kiểm thử sinh ứng viên và cấu trúc Apriori-TID.
-include(joinpath(@__DIR__, "..", "tests", "test_apriori_tid.jl"))
+include(joinpath(@__DIR__, "test_apriori_tid.jl"))
 
 # Chạy kiểm thử kết quả khai thác tập phổ biến.
-include(joinpath(@__DIR__, "..", "tests", "test_correctness.jl"))
+include(joinpath(@__DIR__, "test_correctness.jl"))
 
 # Chạy kiểm thử đọc, ghi file và CLI.
-include(joinpath(@__DIR__, "..", "tests", "test_io.jl"))
+include(joinpath(@__DIR__, "test_io.jl"))
 
 # Chạy kiểm thử công cụ đối chiếu SPMF.
-include(joinpath(@__DIR__, "..", "tests", "test_spmf.jl"))
-include(joinpath(@__DIR__, "..", "tests", "test_market_basket.jl"))
-include(joinpath(@__DIR__, "..", "tests", "test_visual_patterns.jl"))
+include(joinpath(@__DIR__, "test_spmf.jl"))
+include(joinpath(@__DIR__, "test_market_basket.jl"))
+include(joinpath(@__DIR__, "test_visual_patterns.jl"))
 
 if !core_only
     image_environment = joinpath(project_directory, "visual_environment")

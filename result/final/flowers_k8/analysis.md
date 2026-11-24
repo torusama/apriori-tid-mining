@@ -1,0 +1,15 @@
+# Visual Pattern Mining Analysis
+
+Images and transactions: 1360.
+
+- Minsup 0.7: 255 frequent itemsets.
+- Minsup 0.8: 237 frequent itemsets.
+- Minsup 0.9: 47 frequent itemsets.
+
+Images containing all 8 visual words: 1064/1360 (78.24%).
+Average visual words per image: 7.57.
+High saturation can reduce the ability of patterns to distinguish images. Compare a larger K or fewer descriptors on the same images.
+Each pattern can be used as a binary feature for classification or image retrieval. Evaluate on an independent test set before drawing conclusions.
+
+ORB describes local image regions. Visual words are descriptor clusters, not necessarily specific flower parts.
+Transactions discard spatial positions and repetitions. K, seed and image size affect results; co-occurrence does not establish classification performance.

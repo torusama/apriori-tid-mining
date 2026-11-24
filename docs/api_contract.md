@@ -25,11 +25,11 @@ Example: `(1, 2) => 3` means that itemset `{1, 2}` appears in three transactions
 mine(transactions; minimum_support=0.4, implementation=:basic)
 ```
 
-- `:basic`: basic Apriori-TID implementation (TASK 01).
-- `:optimized`: optimized Apriori-TID implementation (TASK 03).
+- `:basic`: basic Apriori-TID implementation.
+- `:optimized`: optimized Apriori-TID implementation.
 - Both implementations validate the input and return a `MiningResult` with the same support semantics.
 
-## SPMF Input and Output (TASK 01)
+## SPMF Input and Output
 
 Input: one transaction per line, with space-separated item IDs.
 

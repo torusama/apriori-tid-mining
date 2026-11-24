@@ -1,0 +1,134 @@
+Command: julia --threads=1 --project=. test/runtests.jl
+Source revision: c633d4f33d20f639bf1facb147745da7dbd2a20f
+Julia 1.13.4; OpenJDK 27; exit code 0
+
+>/private/var/folders/k7/r5bpw9sn1fxf54h49z40035r0000gp/T/jl_e7wfAo/spmf.jar
+=============  APRIORI TID FAST v. 2.66 - STATS =============
+ Transactions count from database : 5
+ Frequent itemsets count : 7
+ Maximum memory usage : 3.3647689819335938 mb
+ Total time ~ 1 ms
+===================================================
+>/private/var/folders/k7/r5bpw9sn1fxf54h49z40035r0000gp/T/jl_oJ2Rx5/spmf.jar
+=============  APRIORI TID FAST v. 2.66 - STATS =============
+ Transactions count from database : 5
+ Frequent itemsets count : 6
+ Maximum memory usage : 3.3538284301757812 mb
+ Total time ~ 1 ms
+===================================================
+>/private/var/folders/k7/r5bpw9sn1fxf54h49z40035r0000gp/T/jl_J2lk8Y/spmf.jar
+=============  APRIORI TID FAST v. 2.66 - STATS =============
+ Transactions count from database : 4
+ Frequent itemsets count : 3
+ Maximum memory usage : 3.3561248779296875 mb
+ Total time ~ 1 ms
+===================================================
+>/private/var/folders/k7/r5bpw9sn1fxf54h49z40035r0000gp/T/jl_Rl0qJz/spmf.jar
+=============  APRIORI TID FAST v. 2.66 - STATS =============
+ Transactions count from database : 5
+ Frequent itemsets count : 1
+ Maximum memory usage : 3.3217239379882812 mb
+ Total time ~ 1 ms
+===================================================
+>/private/var/folders/k7/r5bpw9sn1fxf54h49z40035r0000gp/T/jl_rsg9l5/spmf.jar
+=============  APRIORI TID FAST v. 2.66 - STATS =============
+ Transactions count from database : 5
+ Frequent itemsets count : 0
+ Maximum memory usage : 3.3412704467773438 mb
+ Total time ~ 1 ms
+===================================================
+>/private/var/folders/k7/r5bpw9sn1fxf54h49z40035r0000gp/T/jl_5Osx3p/spmf.jar
+=============  APRIORI TID FAST v. 2.66 - STATS =============
+ Transactions count from database : 5
+ Frequent itemsets count : 13
+ Maximum memory usage : 3.3373947143554688 mb
+ Total time ~ 1 ms
+===================================================
+>/private/var/folders/k7/r5bpw9sn1fxf54h49z40035r0000gp/T/jl_YbSkhp/spmf.jar
+=============  APRIORI TID FAST v. 2.66 - STATS =============
+ Transactions count from database : 5
+ Frequent itemsets count : 3
+ Maximum memory usage : 3.3491439819335938 mb
+ Total time ~ 0 ms
+===================================================
+>/private/var/folders/k7/r5bpw9sn1fxf54h49z40035r0000gp/T/jl_Y92KOj/spmf.jar
+=============  APRIORI TID FAST v. 2.66 - STATS =============
+ Transactions count from database : 5
+ Frequent itemsets count : 2
+ Maximum memory usage : 3.377288818359375 mb
+ Total time ~ 1 ms
+===================================================
+>/private/var/folders/k7/r5bpw9sn1fxf54h49z40035r0000gp/T/jl_hrCQEz/spmf.jar
+=============  APRIORI TID FAST v. 2.66 - STATS =============
+ Transactions count from database : 4
+ Frequent itemsets count : 9
+ Maximum memory usage : 3.3605880737304688 mb
+ Total time ~ 1 ms
+===================================================
+>/private/var/folders/k7/r5bpw9sn1fxf54h49z40035r0000gp/T/jl_I6w9EW/spmf.jar
+=============  APRIORI TID FAST v. 2.66 - STATS =============
+ Transactions count from database : 100000
+ Frequent itemsets count : 2
+ Maximum memory usage : 5.5387725830078125 mb
+ Total time ~ 71 ms
+===================================================
+    ImageCorners Being precompiled by another process (pid: 63728, pidfile: /Users/Mac/.julia/compiled/v1.13/ImageCorners/GlayX_HOHhB.ji.pidfile)
+    ImageSegmentation Being precompiled by another process (pid: 63728, pidfile: /Users/Mac/.julia/compiled/v1.13/ImageSegmentation/khx7z_HOHhB.ji.pidfile)
+Errors encountered while load File{DataFormat{:JPEG}, String}("/var/folders/k7/r5bpw9sn1fxf54h49z40035r0000gp/T/jl_608cxO/broken.jpg").
+
+Fatal error:
+All errors:
+===========================================
+ArgumentError: Invalid number of bytes.
+===========================================
+ArgumentError: Invalid number of bytes.
+===========================================
+InsufficientImageDataInFile `/var/folders/k7/r5bpw9sn1fxf54h49z40035r0000gp/T/jl_608cxO/broken.jpg' @ error/jpeg.c/ReadOneJPEGImage/1546
+===========================================
+ArgumentError: Package OpenCV [f878e3a2-a245-4720-8660-60795d644f2a] is required but does not seem to be installed:
+ - Run `Pkg.instantiate()` to install all recorded dependencies.
+
+===========================================
+Test Summary:                         | Pass  Total  Time
+Image descriptors and visual codebook |    7      7  7.2s
+Test Summary:            | Pass  Total  Time
+TASK 00 - Base functions |   19     19  1.6s
+Test Summary:                  | Pass  Total  Time
+Exact minimum support boundary |    7      7  0.1s
+Test Summary:                  | Pass  Total  Time
+TASK 01 - Candidate generation |    6      6  0.1s
+Test Summary:                              | Pass  Total  Time
+TASK 01 - Intermediate transaction records |    9      9  0.2s
+Test Summary:                | Pass  Total  Time
+TASK 02 - Five toy databases |    7      7  0.2s
+Test Summary:                | Pass  Total  Time
+TASK 02 - VLDB 1994 Figure 3 |    1      1  0.0s
+Test Summary:            | Pass  Total  Time
+TASK 02 - Boundary cases |    3      3  0.0s
+Test Summary:                   | Pass  Total  Time
+TASK 03 - Optimized Apriori-TID |   30     30  0.2s
+Test Summary:              | Pass  Total  Time
+Independent support counts |    6      6  0.1s
+Test Summary:                        | Pass  Total  Time
+TASK 02 - SPMF file input and output |   11     11  0.3s
+Input transactions: 5
+Frequent itemsets: 6
+Output file: /var/folders/k7/r5bpw9sn1fxf54h49z40035r0000gp/T/jl_OSGpeF/cli_results.txt
+Input transactions: 5
+Frequent itemsets: 6
+Output file: /var/folders/k7/r5bpw9sn1fxf54h49z40035r0000gp/T/jl_OSGpeF/cli_results.txt
+Input transactions: 5
+Frequent itemsets: 6
+Output file: /var/folders/k7/r5bpw9sn1fxf54h49z40035r0000gp/T/jl_OSGpeF/cli_results.txt
+Test Summary:                    | Pass  Total  Time
+TASK 02 - Command line interface |   12     12  0.2s
+Test Summary:             | Pass  Total  Time
+TASK 02 - SPMF comparator |    6      6  0.2s
+Test Summary:              | Pass  Total  Time
+TASK 02 - SPMF integration |   19     19  2.8s
+Test Summary:                                  | Pass  Total  Time
+Groceries mapping and association-rule metrics |   15     15  1.6s
+Test Summary:                                     | Pass  Total  Time
+Visual patterns preserve empty image transactions |   10     10  0.3s
+Running image integration tests
+Full test suite completed successfully.

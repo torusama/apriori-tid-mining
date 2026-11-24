@@ -1,0 +1,9 @@
+dataset,minsup,implementation,peak_rss_bytes
+chess,0.92,basic,326041600
+chess,0.92,optimized,305774592
+mushroom,0.55,basic,297615360
+mushroom,0.55,optimized,301826048
+retail,0.03,basic,398917632
+retail,0.03,optimized,314490880
+T10I4D100K,0.04,basic,373915648
+T10I4D100K,0.04,optimized,300859392

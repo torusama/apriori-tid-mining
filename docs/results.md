@@ -1,56 +1,60 @@
-## Báo cáo — kết quả lịch sử trước chỉnh sửa
+# Kết quả thực nghiệm
 
-Các số liệu dưới đây được giữ nguyên từ lần chạy trước. Cần chạy lại benchmark và kiểm thử trên code mới trước khi dùng làm bằng chứng nộp bài.
+Bộ kết quả tham chiếu dùng cho báo cáo nằm trong [result/final](../result/final/). Các thư mục `result/benchmark` và `result/market_basket` là kết quả lịch sử. Phiên bản nguồn, fingerprint của mã đo, cấu hình, checksum và phạm vi đo được lưu trong [run_manifest.toml](../result/final/run_manifest.toml). Toàn bộ **168 kiểm tra thuộc 16 testset** hoàn thành với mã thoát 0, gồm SPMF và tích hợp ảnh: [log đầy đủ](../result/correctness/final-tests.txt).
 
-## Chương 1 · Apriori-TID tối ưu
+## Cài đặt và tối ưu
 
-Bản cơ bản duyệt toàn bộ ứng viên cho mỗi bản ghi TID và dựng lại hai tập sinh của từng ứng viên. Nếu cấp `k` có `C[k]` ứng viên và cấp trước còn `R[k−1]` bản ghi, vòng đếm cơ bản xét `R[k−1] × C[k]` cặp bản ghi–ứng viên. Bản tối ưu tính hai tập sinh một lần mỗi cấp, dùng ID số và lập chỉ mục ứng viên theo tập sinh thứ nhất. Mỗi bản ghi chỉ duyệt các nhóm ứng viên của những tập nó chứa. Mảng đánh dấu dùng chỉ số bản ghi để tra tập sinh còn lại. Sau khi đếm support, bản tối ưu giữ các tập đủ ngưỡng trong bản ghi trung gian.
+Basic hiện đã tính trước hai tập sinh của ứng viên ở mỗi cấp. Với mỗi bản ghi TID, Basic vẫn duyệt danh sách ứng viên và kiểm tra hai tập sinh bằng tuple. Không dùng mô tả “tạo lại tập sinh ở mỗi bản ghi” cho bản tích hợp này.
 
-Hai bản dùng chung bước sinh và cắt tỉa ứng viên, quy tắc ngưỡng `ceil(minsup × số giao dịch)` và kiểu kết quả `MiningResult`. Kiểm thử bao gồm giao dịch lặp, support đúng ngưỡng, tập kết quả rỗng, tập mục dài, CLI và các ca đối chiếu SPMF. [Thuật toán tối ưu](../src/algorithm/apriori_tid_optimized.jl) · [Output kiểm thử](../result/correctness/phat-tests.txt)
+Optimized gán ID nguyên cho itemset, nhóm ứng viên theo ID tập sinh thứ nhất và đánh dấu ID có mặt trong bản ghi bằng mảng dùng lại. Khi đếm support, mỗi bản ghi chỉ duyệt ứng viên liên quan đến các tập sinh nó chứa. Sau khi lọc support, bản ghi trung gian chỉ giữ ID của itemset phổ biến. Hai bản dùng chung candidate generation, pruning và ngưỡng count chính xác `ceil(minsup × N)`.
 
-## Chương 2 · Thực nghiệm
+## Benchmark
 
-Bốn dataset đến từ FIMI. Retail do Tom Brijs cung cấp. Retail và T10I4D100K có mã 0 trong nguồn nên toàn bộ mã của từng dataset được dịch lên một đơn vị. Cả Julia và SPMF nhận dữ liệu đã chuẩn hóa giống nhau. Bảng correctness đếm support theo giao dịch, so khớp từng itemset và ghi riêng số itemset thiếu, thừa và sai support. [Nguồn FIMI](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/) · [Thông tin dataset và checksum](../result/benchmark/datasets.csv)
+Bốn dataset FIMI được chuẩn hóa và kiểm tra SHA-256. Retail và T10I4D100K dịch toàn bộ item ID lên một đơn vị để loại mã 0; phép đổi giữ nguyên quan hệ xuất hiện. [Dataset/checksum](../result/final/benchmark/datasets.csv) · [Cấu hình năm minsup](../configs/benchmark.toml)
 
-Phép đo dùng máy Apple M5 16 GiB, Julia 1.13.4 một thread, OpenJDK 27 và SPMF Apriori TID FAST v2.66. Runtime Julia là median của ba lần gọi `mine()` sau warm-up. Runtime SPMF là median thời gian nội bộ do ba lượt SPMF báo cáo. Hai cột runtime sử dụng phạm vi đo riêng. Peak RSS đo bằng tiến trình Julia mới ở ngưỡng giữa và bao gồm khởi động, đọc dữ liệu và ghi kết quả. Cấp phát tích lũy trong runtime được ghi riêng theo byte. [Số liệu](../result/benchmark/benchmarks.csv) · [Môi trường](../result/benchmark/environment.txt)
+Máy đo Apple M5, RAM 16 GiB, macOS aarch64, Julia 1.13.4 một thread, OpenJDK 27, SPMF Apriori TID FAST v2.66. Julia dùng median ba lần `mine()` sau warm-up; SPMF dùng median thời gian nội bộ của ba JVM mới. Hai phạm vi thời gian khác nhau nên chỉ so sánh mô tả. Peak RSS đo toàn bộ tiến trình Julia mới, gồm khởi động, đọc và ghi; khác với byte cấp phát tích lũy. [Môi trường](../result/final/benchmark/environment.txt) · [CSV thời gian](../result/final/benchmark/benchmarks.csv)
 
-Cả hai bản Julia khớp **100% itemset và support count với SPMF ở cả 20 cấu hình dataset–minsup**. Bảng sau ghi thời gian và peak RSS tại ngưỡng giữa của mỗi dataset. [Biểu đồ runtime](../result/benchmark/runtime_ms.png) · [Biểu đồ peak RSS](../result/benchmark/peak_ram.png)
+Cả Basic và Optimized khớp **100% từng itemset và support count với SPMF tại đủ 20 cấu hình**; không có itemset thiếu, thừa hay sai count. T10I4D100K tại 3,5% dùng đúng ngưỡng **3.500**, thu được 40 itemset. [Đối chiếu](../result/final/benchmark/benchmarks.csv)
 
-Ở T10I4D100K với minsup 3,5%, API trước chỉnh sửa tính ngưỡng 3.501 do làm tròn số thực nhị phân. Ghi chú của lần chạy trước cho biết kiểm tra thêm với ngưỡng chính xác 3.500 cho cùng 40 itemset và support count. Bản chỉnh sửa chuyển tỷ lệ sang phân số chính xác và có test hồi quy mới; chưa chạy lại thực nghiệm.
+| Dataset | Minsup giữa | Basic (ms) | Optimized (ms) | SPMF (ms) | Basic/Optimized | Peak RSS Basic → Optimized (MiB) |
+|---|---:|---:|---:|---:|---:|---:|
+| Chess | 92% | 340,2 | 51,8 | 22 | 6,57× | 310,9 → 291,6 |
+| Mushroom | 55% | 326,0 | 34,3 | 25 | 9,52× | 283,8 → 287,8 |
+| Retail | 3% | 1.326,8 | 101,2 | 393 | 13,11× | 380,4 → 299,9 |
+| T10I4D100K | 4% | 3.235,2 | 77,3 | 252 | 41,86× | 356,6 → 286,9 |
 
-| Dataset | Minsup giữa | Basic (ms) | Optimized (ms) | SPMF (ms) | Peak RSS basic → optimized (MiB) |
-|---|---:|---:|---:|---:|---:|
-| Chess | 92% | 680,7 | 31,6 | 24 | 303,3 → 285,4 |
-| Mushroom | 55% | 257,6 | 19,4 | 14 | 303,2 → 282,0 |
-| Retail | 3% | 1.561,5 | 49,8 | 182 | 491,0 → 306,1 |
-| T10I4D100K | 4% | 8.683,2 | 51,1 | 56 | 394,5 → 284,5 |
+Qua 20 cấu hình, hệ số Basic/Optimized nằm trong **3,19–70,87×**. Peak RSS giảm 6,22% ở Chess, 21,16% ở Retail và 19,54% ở T10I4D100K; riêng Mushroom **tăng 1,41%**. Mức cấp phát vòng đếm thấp hơn không bảo đảm toàn bộ peak RSS giảm, vì runtime và đọc/ghi cũng đóng góp vào tiến trình.
 
-- **Ảnh hưởng của minsup.** Từ ngưỡng cao nhất xuống thấp nhất trong mỗi dải, số tập phổ biến tăng từ 44 lên 1.195 ở Chess và từ 31 lên 1.189 ở Mushroom. Retail tăng từ 16 lên 84 và T10I4D100K từ 17 lên 40. Retail và T10I4D100K vẫn có chi phí lớn ở bản cơ bản vì thuật toán duyệt tập ứng viên theo số lượng lớn giao dịch, kể cả khi các ứng viên ít đồng xuất hiện. [Biểu đồ số tập mục](../result/benchmark/itemsets.png)
-- **Mức cải thiện.** Qua 20 cấu hình, runtime Julia của bản tối ưu nhanh hơn bản cơ bản từ 8,7× đến 331×. Ở ngưỡng giữa, peak RSS giảm 6–38%. SPMF có thời gian báo cáo thấp hơn bản tối ưu ở ngưỡng giữa của hai bộ dữ liệu dày. Kết quả ở các ngưỡng thưa cần đọc cùng phạm vi đo và phiên bản SPMF.
-- **Scalability của Retail.** Với minsup 3% và seed 42, khi dữ liệu tăng từ 8.816 lên 88.162 giao dịch, median của bản cơ bản tăng từ 150,0 lên 2.266,7 ms và bản tối ưu từ 4,8 lên 137,4 ms. Mức tăng toàn dải lớn hơn hệ số tăng số dòng. Cùng tập đầy đủ, runtime optimized ở phép đo riêng theo minsup là 49,8 ms. Cần lặp lại phép đo giữa các tiến trình trước khi suy ra tốc độ tăng ổn định. [Số liệu scalability](../result/benchmark/scalability.csv)
-- **Độ dài giao dịch.** Với 3.000 giao dịch, 32 item, minsup 35% và seed 42, số tập phổ biến là 0, 32, 32, 528 ở độ dài 8, 12, 16, 20. Từ độ dài 16 lên 20, nhiều cặp vượt ngưỡng và kích hoạt thêm một cấp sinh ứng viên. Runtime basic tăng từ khoảng 369 lên 4.045 ms. Optimized tăng từ 14,3 lên 154,8 ms. [Số liệu độ dài](../result/benchmark/transaction_width.csv) · [Biểu đồ hai phép đo](../result/benchmark/scaling_and_width.png)
+[Runtime, trục log](../result/final/benchmark/runtime_ms.png) · [Số itemset](../result/final/benchmark/itemsets.png) · [Peak RSS](../result/final/benchmark/peak_ram.png)
 
-### Hướng cải tiến tiếp theo
+- **Minsup:** số tập phổ biến tăng 44 → 1.195 (Chess), 31 → 1.189 (Mushroom), 16 → 84 (Retail), 17 → 40 (T10I4D100K). Chi phí duyệt ứng viên còn phụ thuộc mật độ giao dịch và số bản ghi trung gian, không chỉ số itemset đầu ra.
+- **Scalability:** Retail 10–100%, seed 42, minsup 3%, tăng từ 8.816 lên 88.162 giao dịch. Basic tăng 186,9 → 1.437,9 ms; Optimized 22,3 → 112,3 ms. Một số điểm không đơn điệu. Ba tiến trình mới tại 100% lần lượt cho Basic 1.031,6/1.051,4/1.044,0 ms và Optimized 77,5/151,6/78,5 ms. Đây là bằng chứng dao động giữa các lượt; chưa đủ để suy ra định luật tăng trưởng. [Scalability](../result/final/benchmark/scalability.csv) · [Ba tiến trình](../result/final/benchmark/retail_process_trials.csv)
+- **Độ dài giao dịch:** 3.000 giao dịch tổng hợp, 32 item, seed 42, minsup 35%. Độ dài 8/12/16/20 cho 0/32/32/528 itemset. Từ độ dài 16 lên 20, Basic tăng 196,0 → 3.466,8 ms; Optimized 24,2 → 265,4 ms. Độ dài lớn làm nhiều cặp vượt ngưỡng và kích hoạt cấp sinh tiếp theo. [CSV](../result/final/benchmark/transaction_width.csv) · [Hình](../result/final/benchmark/scaling_and_width.png)
 
-1. **Nhóm tập mục theo prefix khi sinh ứng viên.** Bộ sinh hiện xét từng cặp tập phổ biến trước khi kiểm tra prefix. Sắp xếp và ghép các tập trong từng nhóm prefix để giảm số phép so sánh, rồi đo lại thời gian sinh ứng viên theo cấp.
-2. **Chọn biểu diễn TID theo mật độ.** Thử bitset cho những tập có nhiều TID và danh sách TID đã sắp xếp cho những tập thưa. Dùng cùng dữ liệu và ngưỡng để đo chi phí giao, bộ nhớ và tính tương đương với bản hiện tại.
+Máy đo còn chạy ứng dụng khác; chỉ dùng một máy, một seed và ba lượt cho mỗi điểm. Các con số mô tả lượt thực nghiệm đã lưu, chưa chứng minh ưu thế trên mọi workload hay môi trường.
 
-## Chương 3 · Groceries
+### Hai cải tiến tiếp theo
 
-Ma trận arules có 9.835 giao dịch và 169 nhóm sản phẩm. Số lượng dương biểu thị sản phẩm có trong giỏ. Mỗi giỏ trung bình có 4,41 nhóm sản phẩm, trải từ 1 đến 32. Có 2.824 giỏ có cùng tập nhóm sản phẩm với một dòng trước đó. Mỗi dòng vẫn đóng góp một giao dịch vào support. [Tài liệu arules](https://michael.hahsler.net/arules/reference/Groceries.html) · [Phân phối độ dài giỏ](../result/market_basket/basket_lengths.png)
+1. **Ghép ứng viên theo nhóm prefix.** Hàm hiện xét từng cặp itemset đã sắp xếp trước khi kiểm tra prefix. Chỉ ghép trong cùng nhóm prefix để giảm cặp được xét; profiling riêng thời gian sinh ứng viên và kiểm tra output/support sau thay đổi.
+2. **Biểu diễn theo mật độ.** Thử bitset cho tập ID dày và vector ID đã sắp xếp cho tập thưa. Tính cả chi phí chuyển đổi và bộ nhớ chỉ mục; đo từng cấp trên Chess/Mushroom và Retail trước khi chọn ngưỡng chuyển.
 
-Ở minconf 40%, độ nhạy theo minsup như sau. Mức 1% yêu cầu ít nhất 99 giỏ chứa hợp hai vế và cho đủ luật để xếp hạng. Bản cơ bản, bản tối ưu và SPMF khớp cả 333 itemset và support count ở mức này.
+Có thể khảo sát tiếp việc giảm tuple/dictionary ở cấp sinh, sau khi profiling cho thấy phần này chiếm tỷ trọng đáng kể.
 
-| Minsup | Frequent itemsets | Luật đạt minconf |
-|---:|---:|---:|
-| 0,50% | 1.001 | 270 |
-| 0,75% | 531 | 119 |
-| **1,00%** | **333** | **62** |
-| 1,50% | 180 | 25 |
-| 2,00% | 122 | 15 |
+## Groceries
 
-- **Lift cao nhất.** `citrus fruit + root vegetables → other vegetables` có 102 giỏ, support 1,04%, confidence 58,62% và lift 3,03. Có thể dùng luật để chọn nhóm nhận gợi ý rau khi đã có trái cây họ cam quýt và rau củ.
-- **Phủ nhiều giỏ hơn.** `root vegetables + whole milk → other vegetables` có 228 giỏ, support 2,32%, confidence 47,40% và lift 2,45. Có thể thử gợi ý mua kèm cho nhóm này để có lượng quan sát lớn hơn.
-- **Thiên lệch danh mục.** Cả mười luật đầu đều hướng đến `other vegetables`. Nên thử gợi ý ở nhóm giỏ chưa có danh mục đích rồi theo dõi tỷ lệ mua kèm, biên lợi nhuận và độ ổn định theo kỳ. Dữ liệu chỉ phản ánh một cửa hàng trong 30 ngày.
+9.835 giỏ, 169 danh mục, trung bình 4,41 danh mục/giỏ (1–32). Có 2.824 giỏ trùng tập danh mục với dòng trước, vẫn giữ làm các giao dịch riêng. Minsup 1% tương ứng ít nhất 99 giỏ, minconf 40% tạo **333 itemset, 62 luật**. Basic, Optimized và SPMF khớp support của cả 333 itemset. [Summary](../result/final/market_basket/summary.toml) · [Đối chiếu](../result/final/market_basket/correctness.txt)
 
-[Bảng top 10](../result/market_basket/top10_rules.csv) · [Biểu đồ lift](../result/market_basket/top10_rules.png) · [Toàn bộ luật](../result/market_basket/rules.csv)
+Với luật X → Y: support = count(X∪Y)/N; confidence = count(X∪Y)/count(X); lift = confidence/(count(Y)/N). Bộ chỉ số được kiểm tra lại từ giao dịch đã lưu.
+
+- `citrus fruit + root vegetables → other vegetables`: 102 giỏ, support 1,04%, confidence 58,62%, lift 3,03. Có thể chọn nhóm nhận thử nghiệm gợi ý rau dựa trên giỏ hiện tại.
+- `root vegetables + whole milk → other vegetables`: 228 giỏ, support 2,32%, confidence 47,40%, lift 2,45. Phủ nhiều giỏ hơn, phù hợp khảo sát một nhóm thử nghiệm lớn hơn.
+- Top 10 đều có vế phải `other vegetables`. Điều này phản ánh cấu trúc danh mục và độ phổ biến của nhóm đích; cần xem thêm độ đa dạng, support và độ ổn định theo kỳ.
+
+Dữ liệu một cửa hàng trong 30 ngày. Đồng xuất hiện không chứng minh tác động của khuyến mãi hay lợi nhuận. Có thể thử nghiệm gợi ý/khuyến mãi bằng nhóm đối chứng, đo tỷ lệ mua kèm, giá trị giỏ và biên lợi nhuận.
+
+[Top 10 luật](../result/final/market_basket/top10_rules.csv) · [Biểu đồ lift](../result/final/market_basket/top10_rules.png) · [Độ dài giỏ](../result/final/market_basket/basket_lengths.png) · [Toàn bộ luật](../result/final/market_basket/rules.csv)
+
+## Flowers-17 và báo cáo
+
+Hai cấu hình ảnh đã chạy lại trên đủ 1.360 ảnh bằng Julia; xem [chi tiết và giới hạn](visual-patterns.md).
+Nguồn báo cáo độc lập nằm trong [docs/Report.pdf](docs/Report.pdf)

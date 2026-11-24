@@ -20,7 +20,7 @@ Raw data -> Transaction preprocessing -> Apriori-TID -> Frequent itemsets -> Eva
 - `src/utils.jl`: transaction normalization, validation, and minimum support threshold.
 - `src/algorithm/api.jl`: public `mine()` interface.
 - `src/FrequentItemsetMining.jl`: Julia module entry point and `include()` declarations.
-- `test/runtests.jl`: main Julia test entry point.
+- `tests/runtests.jl`: main Julia test entry point.
 - `scripts/check_base.jl`: standalone Base demonstration without mining.
 
 ## Integration Rules
@@ -31,4 +31,4 @@ Raw data -> Transaction preprocessing -> Apriori-TID -> Frequent itemsets -> Eva
 4. Transactions and itemsets use sorted, unique item IDs.
 5. Applications and evaluation use the shared `mine()` API.
 6. Do not import a ready-made frequent itemset mining algorithm.
-7. TASK 01 and later add implementation files to the main module only after they contain working code.
+7. Keep evaluation, visualization, and image dependencies in their dedicated Julia environments.

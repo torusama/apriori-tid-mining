@@ -1,0 +1,177 @@
+{
+  "status": "passed",
+  "runtime": "dedicated Colab CPU Standard",
+  "completed_utc": "2026-11-24T13:28:58.671667+00:00",
+  "python": "3.13.18 (main, Oct 26 2026, 15:28:15) [GCC 13.3.0]",
+  "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+  "julia": "julia version 1.12.6",
+  "java": "openjdk version \"25.0.2\" 2026-01-20\nOpenJDK Runtime Environment (build 25.0.2+10-69)\nOpenJDK 64-Bit Server VM (build 25.0.2+10-69, mixed mode, sharing)\n",
+  "source_base_revision": "c633d4f33d20f639bf1facb147745da7dbd2a20f",
+  "source_delivery_method": "public base checkout plus uploaded local working tree archives; no claim of published final commit",
+  "workspace": "/tmp/apriori-demo-zrqz1qsr",
+  "notebook_code_cells": 10,
+  "run_full_benchmark": false,
+  "benchmark_display": "saved Mac results; four fresh quick correctness cases executed on Colab",
+  "full_tests_exit_code": 0,
+  "source_files_sha256": {
+    "Manifest.toml": "9d53374c63ef6ee919e2af2317f4185c4a5f75339d323d649521498666e51d24",
+    "Project.toml": "bcbe2c5d1be5d647e39f811e50762f85d35992230b9f5bf616c098c05afb7f94",
+    "configs/benchmark.toml": "6f15070707fb108f95a7aa07a0e256d106c1410f9bc07b9d9ebf97a33c8d988e",
+    "configs/default.toml": "0fe7d00e06986006f69d54e06a2f408cc6823e04c1e55f04d26fbe3802f42612",
+    "evaluation_environment/Manifest.toml": "26db7fd5857966bf18d8ddd953b0a8705e167b5cb462251a498d9cf4109a09bc",
+    "evaluation_environment/Project.toml": "b3d57e7e96108f07fc53813d5d721dc690d35ac72467374a36738a46062f4a7f",
+    "notebooks/demo.ipynb": "6296476d3b961a17ba2d5a20d97ae1f85956a21c580a58fa0def4cd2d0d26937",
+    "notebooks/phat_demo.ipynb": "63c2c57b13916a0e9596f4dccd32d02826896063c4f394ec280e55acb9cf4f02",
+    "scripts/capture_run_metadata.jl": "67683a62547c73e85f4a0f02d969602f414415ba868b09e12998358e06e44131",
+    "scripts/check_base.jl": "afffbcd27f31d990859c0382e15c2532fc576be98b5876cc88b7a8589c51d2bb",
+    "scripts/cli.jl": "2b39e67ab9c2437cdd93ab34005ce2aaa868c422cd47b99ada4942ee16d34b34",
+    "scripts/compare_spmf.jl": "494471afdfdae174009fe1e9e33f53a94965fd2c1e38fe0a0954762ffca0f25f",
+    "scripts/fetch_datasets.jl": "5893b7c6ed0eabf08aede57e0c2587dfde5ae7736a81238ce8c7384f2627c0dd",
+    "scripts/measure_retail_processes.jl": "ecb8f53c07b6f68d66a356d5f534d63ab46c5638b53fa129203ebcef2e15b5d7",
+    "scripts/plot_results.jl": "a7a8b0e112e31648126c7f404f353c00d843be881c45d4f03e4f13f87fd1b8ed",
+    "scripts/run_all_tests.jl": "413ac1e5e09bb2f60558aad4c1a9e70f69f5241b91b8256421269ceff4fe5dde",
+    "scripts/run_benchmark.jl": "95886f46c04f44a6e3de0e0814e6ae1c3bfefac3ba0865252844f5de692b574e",
+    "scripts/run_market_basket.jl": "e7d07f1f1b845fdb373b4c56dc2f85cbcb173430f2543a442d44f625018c51f4",
+    "scripts/run_spmf_tests.jl": "889951326cf1d566c71138197b033f0b639939a3b597d843470ec79834a45441",
+    "scripts/run_visual_patterns.jl": "000fec70827e62493651f08a3de6433948ddf9e1d0da6846db54c90ff0ac5951",
+    "scripts/verify_visual_results.jl": "3ce8bb0c4fcd9fda62e51a60bc7c4ffe9fafdd8040ea67bac8e172b90ff9ff33",
+    "scripts/visual_pipeline.jl": "7a3c640b23702b618b2a09af7fd2f892ef87cfd572bda42396c242cfd98dc9da",
+    "src/FrequentItemsetMining.jl": "f4c4961f52e86e8406e3bbd14f1e9ed46d991d956ed8761f0a7bbbcb08df96b0",
+    "src/algorithm/api.jl": "553dfa9aac22b5419c1f14a000c08c0023bf38607cc73c609b4c0c9a7c42f036",
+    "src/algorithm/apriori_tid.jl": "ab3a9491f5d5441191ba03e45b349be07e8feda206cedb251fb8a06e24924fe3",
+    "src/algorithm/apriori_tid_optimized.jl": "ed82a93c8632a34cfcfb1be93e2f2d36c1495e4878a05ff81edc6f94dc6a39b0",
+    "src/algorithm/candidate_generation.jl": "9346c47209e0dbc4dab66d3c1ae20d288d3b1d13116528a3262707c34c93804b",
+    "src/algorithm/spmf_io.jl": "a52d5b87bdc1c1ae2cc7bcdc4eb4fd5ab07796cbd87e053857bb55d0d9d69861",
+    "src/applications/association_rules.jl": "9a670f5267e92284a00ff8b7e7c6b928110099a6e4e30582d26f3e37466e8dc1",
+    "src/applications/image_features.jl": "4e36652251c5d6858afbc2e32a5d417d946b240193586bb9e147c013e5dd7192",
+    "src/applications/market_basket.jl": "98f8741f01bfd9b8b22a89a947fcc44aa9a5ea635d2a1229a500413a707a730b",
+    "src/applications/visual_codebook.jl": "f95d81d21a19cf5aa6698cf800262f80f649468e24d292855d782a5153bd81df",
+    "src/applications/visual_patterns.jl": "034d9170590443f9e322fbc0dff03790f038e270ace083b1661d25526fb4f224",
+    "src/evaluation/benchmark.jl": "8829d860273a52a53b7861fa47d3377341c6ab0e08742c149198c963e7ee1776",
+    "src/evaluation/compare_spmf.jl": "aefb57cead5471f653c67b50486fd74299897e17163fb6caee48b9014bb09ac3",
+    "src/evaluation/memory_profile.jl": "9aba02d3d5bc2be3f6b84d5303e91d887c2c73100b75951f6b970be63a369be7",
+    "src/evaluation/plot_results.jl": "cb18fc0328f260250b8407672285a1e88b30dbc5d3e27e73774e82a34ba22ee4",
+    "src/evaluation/scalability.jl": "3dab5213faf8bc1b73b2f28d2a08b582372a4930b9faa0ca78feb88484a6db3d",
+    "src/structures.jl": "174f9b6ad59ea9820e0812d2f3705de795058d5e715203842046dac4d4a7d2a6",
+    "src/utils.jl": "eca73ed243a8de1c5e39dfe2dc519084b413a38f4f5e5240f0a14575458cd030",
+    "visual_environment/Manifest.toml": "bc861ab4f0fa456a524ad54080e1ad0b07dfc915221e891311d49145fa6363b2",
+    "visual_environment/Project.toml": "9ff687c958916e9dc97138d265986c2383e11d7762acd6af4aa7c39223eb2e64"
+  },
+  "groceries_summary": {
+    "transactions": 9835,
+    "items": 169,
+    "duplicate_baskets": 2824,
+    "mean_basket_length": 4.409456024402644,
+    "minimum_support": 0.01,
+    "minconf": 0.4,
+    "implementation": "optimized",
+    "itemsets": 333,
+    "rules": 62
+  },
+  "flowers": {
+    "flowers_k8": {
+      "summary": {
+        "training_descriptors": 18815,
+        "saturated_images": 1077,
+        "julia_version": "1.12.6",
+        "dataset_url": "https://www.robots.ox.ac.uk/~vgg/data/flowers/17/17flowers.tgz",
+        "descriptor": "ORB (ImageFeatures.jl)",
+        "archive_sha256": "fe38a60f8b4a95e657551247d3e7d799a3fafcdbc595be504b12839967823d70",
+        "run_utc": "2026-11-24T13:25:20.207",
+        "clustering": "K-Means (Clustering.jl)",
+        "total_descriptors": 122744,
+        "maximum_descriptors": 100,
+        "images": 1360,
+        "maximum_side": 256,
+        "seed": 42,
+        "visual_words": 8,
+        "empty_transactions": 2,
+        "valid_images": 1360
+      },
+      "runs": [
+        {
+          "minimum_support": "0.7",
+          "absolute_minimum_support": "952",
+          "num_transactions": "1360",
+          "num_patterns": "255",
+          "seconds": "2.854831745",
+          "implementation": "optimized"
+        },
+        {
+          "minimum_support": "0.8",
+          "absolute_minimum_support": "1088",
+          "num_transactions": "1360",
+          "num_patterns": "250",
+          "seconds": "0.027716989",
+          "implementation": "optimized"
+        },
+        {
+          "minimum_support": "0.9",
+          "absolute_minimum_support": "1224",
+          "num_transactions": "1360",
+          "num_patterns": "47",
+          "seconds": "0.014434139",
+          "implementation": "optimized"
+        }
+      ],
+      "verification": {
+        "all_support_counts_match": true,
+        "basic_matches_optimized": true,
+        "images": 1360,
+        "verified_itemset_rows": 552
+      }
+    },
+    "flowers_k16": {
+      "summary": {
+        "training_descriptors": 18815,
+        "saturated_images": 8,
+        "julia_version": "1.12.6",
+        "dataset_url": "https://www.robots.ox.ac.uk/~vgg/data/flowers/17/17flowers.tgz",
+        "descriptor": "ORB (ImageFeatures.jl)",
+        "archive_sha256": "fe38a60f8b4a95e657551247d3e7d799a3fafcdbc595be504b12839967823d70",
+        "run_utc": "2026-11-24T13:27:21.377",
+        "clustering": "K-Means (Clustering.jl)",
+        "total_descriptors": 52459,
+        "maximum_descriptors": 40,
+        "images": 1360,
+        "maximum_side": 256,
+        "seed": 42,
+        "visual_words": 16,
+        "empty_transactions": 2,
+        "valid_images": 1360
+      },
+      "runs": [
+        {
+          "minimum_support": "0.7",
+          "absolute_minimum_support": "952",
+          "num_transactions": "1360",
+          "num_patterns": "11",
+          "seconds": "0.174001109",
+          "implementation": "optimized"
+        },
+        {
+          "minimum_support": "0.8",
+          "absolute_minimum_support": "1088",
+          "num_transactions": "1360",
+          "num_patterns": "0",
+          "seconds": "0.00225972",
+          "implementation": "optimized"
+        },
+        {
+          "minimum_support": "0.9",
+          "absolute_minimum_support": "1224",
+          "num_transactions": "1360",
+          "num_patterns": "0",
+          "seconds": "0.00143012",
+          "implementation": "optimized"
+        }
+      ],
+      "verification": {
+        "all_support_counts_match": true,
+        "basic_matches_optimized": true,
+        "images": 1360,
+        "verified_itemset_rows": 11
+      }
+    }
+  }
+}

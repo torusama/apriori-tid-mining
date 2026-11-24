@@ -1,0 +1,1 @@
+Dict{String, Integer}("images" => 1360, "all_support_counts_match" => true, "basic_matches_optimized" => true, "verified_itemset_rows" => 11)
