@@ -1,4 +1,4 @@
-# Apriori-TID Mining
+﻿# Apriori-TID Mining
 
 Project 02 — Khai phá dữ liệu, Nhóm 17, Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM.
 
@@ -7,21 +7,14 @@ Project 02 — Khai phá dữ liệu, Nhóm 17, Trường Đại học Khoa họ
 | Võ Tấn An | 24127318 |
 | Trịnh Tấn Phát | 24127485 |
 
-Dự án cài đặt Apriori-TID bằng Julia với hai phiên bản `basic` và `optimized`. SPMF được dùng làm tham chiếu để đối chiếu từng frequent itemset và support count. Hai ứng dụng dùng chung thuật toán của nhóm: phân tích giỏ hàng Groceries và khai thác visual words từ Oxford Flowers-17.
+Dự án cài đặt thuật toán khai thác tập phổ biến **Apriori-TID** bằng Julia dựa trên bài báo [Fast Algorithms for Mining Association Rules](https://www.vldb.org/conf/1994/P487.PDF). Hai phiên bản `basic` và `optimized` dùng chung bước sinh ứng viên và được đối chiếu từng itemset, support count với [SPMF](https://www.philippe-fournier-viger.com/spmf/AprioriTID.php). Bản tối ưu dùng ID nguyên, chỉ mục theo tập sinh và mảng đánh dấu để giảm công việc đếm trong các bản ghi trung gian.
 
-## Nội dung
+- [Báo cáo PDF](docs/Report.pdf): cài đặt, thí nghiệm, phân tích và hai ứng dụng.
+- [Mở notebook demo trên Google Colab](https://colab.research.google.com/github/torusama/apriori-tid-mining/blob/main/notebooks/demo.ipynb) · [Notebook trong repo](notebooks/demo.ipynb).
 
-- [Báo cáo](docs/Report.pdf)
-- [Kết quả thực nghiệm](docs/results.md)
-- [Hướng dẫn tái lập và bằng chứng kiểm thử](docs/reproducibility.md)
-- [Notebook demo](notebooks/demo.ipynb)
-- [Kiến trúc](docs/architecture.md) và [API](docs/api_contract.md)
+## Cài đặt
 
-## Môi trường
-
-Cần Julia 1.9 trở lên. Đối chiếu SPMF cần **Java 25 trở lên** vì JAR đi kèm được biên dịch cho Java 25. Peak RSS được đo trên Linux/macOS; người dùng Windows có thể chạy phần này qua WSL hoặc Colab.
-
-Chạy các lệnh tại thư mục gốc của dự án:
+Cần Julia 1.9 trở lên; Java 25 trở lên để chạy SPMF và bộ test đầy đủ. Môi trường có internet khi cài dependencies và tải dữ liệu. Các lệnh dưới đây chạy tại thư mục gốc repository:
 
 ```bash
 julia --version
@@ -31,23 +24,19 @@ julia --project=evaluation_environment -e 'using Pkg; Pkg.instantiate()'
 julia --project=visual_environment -e 'using Pkg; Pkg.instantiate()'
 ```
 
-Môi trường lõi chứa thuật toán và CLI. `evaluation_environment` bổ sung tải dữ liệu/vẽ biểu đồ; `visual_environment` chứa thư viện đọc ảnh, ORB và K-Means. Chi tiết vai trò thư viện ở [docs/REVIEW.md](docs/REVIEW.md).
+Môi trường gốc chứa thuật toán, CLI và test; `evaluation_environment` dùng để tải dữ liệu và vẽ biểu đồ; `visual_environment` chứa các thư viện ảnh, ORB và K-Means. File `tools/spmf.jar` là chương trình tham chiếu, không dùng để tạo kết quả của hai ứng dụng.
 
-## Chạy thuật toán
+## Chạy khai thác
 
 ```bash
 julia --project=. demo.jl --minsup 0.6 data/toy/sample.txt
-julia --project=. demo.jl --minsup 0.6 data/toy/sample.txt --implementation optimized --output result/optimized_output.txt
+julia --project=. demo.jl --minsup 0.6 data/toy/sample.txt --implementation optimized --output result/optimized.txt
+julia --project=. demo.jl --help
 ```
 
-| Tham số | Ý nghĩa |
-|---|---|
-| Đường dẫn positional | File giao dịch đầu vào; có thể thay bằng `--input` |
-| `--minsup` | Support tương đối trong khoảng `(0, 1]` |
-| `--implementation` | `basic` (mặc định) hoặc `optimized` |
-| `--output` | File kết quả; mặc định `result/output.txt` |
+`--minsup` là support tương đối trong khoảng `(0, 1]`; ngưỡng count là `ceil(minsup × số giao dịch)`. `--implementation` chọn `basic` (mặc định) hoặc `optimized`; `--output` mặc định là `result/output.txt`. Đường dẫn đầu vào có thể truyền trực tiếp hoặc dùng `--input`.
 
-File đầu vào có một giao dịch mỗi dòng, các item là số nguyên dương cách nhau bằng khoảng trắng. Trong mỗi giao dịch, item được chuẩn hóa thành tập có thứ tự. Giao dịch trùng nhau vẫn được giữ và đóng góp riêng vào support.
+Đầu vào SPMF có một giao dịch trên mỗi dòng, item là số nguyên dương cách nhau bằng dấu cách. Item trùng trong cùng giao dịch được chuẩn hóa; các giao dịch trùng nhau vẫn được tính riêng. Ví dụ:
 
 ```text
 1 2 3
@@ -55,98 +44,93 @@ File đầu vào có một giao dịch mỗi dòng, các item là số nguyên d
 1 3
 ```
 
-Output `1 2 #SUP: 2` nghĩa là tập `{1, 2}` xuất hiện trong hai giao dịch. Dùng `julia --project=. demo.jl --help` để xem trợ giúp CLI.
+Output `1 2 #SUP: 2` cho biết `{1, 2}` xuất hiện trong hai giao dịch.
 
-## Kiểm thử và đối chiếu SPMF
+## Kiểm thử
 
 ```bash
-julia --project=. tests/runtests.jl
+julia --project=. test/runtests.jl
 julia --project=. scripts/compare_spmf.jl tools/spmf.jar data/toy/sample.txt 0.6
 ```
 
-Điểm chạy đầy đủ kiểm tra core, CLI, SPMF, luật kết hợp, giao dịch ảnh và tích hợp ảnh. Khi đạt, chương trình in `Full test suite completed successfully.` và thoát với mã 0. Ca kiểm thử ảnh hỏng có thể in lỗi JPEG; kết luận kiểm thử dựa trên test summary và mã thoát. `--core-only` chỉ chạy phần lõi.
+Bộ đầy đủ kiểm tra thuật toán, biên support, I/O, CLI, SPMF, luật kết hợp và xử lý ảnh. Các test ảnh cần `visual_environment` đã được cài đặt. `julia --project=. test/runtests.jl --core-only` chỉ chạy phần lõi và không thay thế bộ đầy đủ.
 
-Bộ bằng chứng lưu sẵn có **168/168 kiểm tra thuộc 16 testset** đạt trên local và Colab: [log local](result/correctness/final-tests.txt), [log Colab](result/final/colab/full-tests.txt).
+Kết quả lần chạy đầy đủ trên Windows, Julia 1.10.10 và Java 25, ngày 25/11/2026:
+
+```text
+Test Summary:              | Pass  Total
+TASK 02 - SPMF integration |   19     19
+Test Summary:                         | Pass  Total
+Image descriptors and visual codebook |    7      7
+Full test suite completed successfully.
+```
+
+Tổng cộng **168/168** kiểm tra trong 16 testset đạt, mã thoát 0. Test cố ý đọc ảnh JPEG hỏng có thể in thông báo lỗi của các thư viện đọc ảnh dù test đạt.
 
 ## Dữ liệu
 
-| Dataset | Mục đích | Nguồn |
+| Dataset | Công dụng | Nguồn công khai |
 |---|---|---|
-| `data/toy/sample.txt` | Chạy thử nhanh | Kèm dự án |
-| Chess, Mushroom, Retail, T10I4D100K | Benchmark | [FIMI](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/) |
-| Groceries | Luật kết hợp | [arules](https://github.com/mhahsler/arules/tree/master/data_src/Groceries) |
-| Oxford Flowers-17 | Visual pattern mining | [Oxford VGG](https://www.robots.ox.ac.uk/~vgg/data/flowers/17/index.html) |
-
-Script tải lưu dữ liệu tại `data/raw/`, thư mục được bỏ qua bởi Git. Bốn benchmark có SHA-256 của file chuẩn hóa trong [datasets.csv](result/final/benchmark/datasets.csv). Retail và T10I4D100K dịch toàn bộ item ID lên một đơn vị để loại mã 0; quan hệ xuất hiện không đổi.
-
-## Benchmark
+| `data/toy/sample.txt` | Ví dụ nhỏ | Có sẵn trong repo |
+| Chess, Mushroom, Retail, T10I4D100K | Benchmark | [FIMI repository](https://www.cs.rpi.edu/~zaki/Workshops/FIMI/data/) |
+| Groceries | Phân tích giỏ hàng | [arules Groceries](https://github.com/mhahsler/arules/tree/master/data_src/Groceries) |
+| Oxford Flowers-17 | Mẫu trực quan | [Oxford VGG](https://www.robots.ox.ac.uk/~vgg/data/flowers/17/) |
 
 ```bash
-julia --project=evaluation_environment scripts/fetch_datasets.jl benchmark
-julia --threads=1 --project=. scripts/capture_run_metadata.jl result/benchmark_run
-julia --startup-file=no --threads=1 --project=. scripts/run_benchmark.jl data/raw/benchmark result/benchmark_run/benchmark
-julia --project=evaluation_environment scripts/plot_results.jl benchmark result/benchmark_run/benchmark
+julia --project=evaluation_environment scripts/fetch_datasets.jl all
 ```
 
-[configs/benchmark.toml](configs/benchmark.toml) quy định năm minsup mỗi dataset, warm-up, ba lượt đo, seed và dữ liệu tổng hợp. Pipeline xuất correctness, runtime, số itemset, peak RSS, scalability Retail 10–100% và ảnh hưởng độ dài giao dịch.
+Script tải benchmark và Groceries vào `data/raw/`; Flowers-17 được pipeline ảnh tự tải. Benchmark được chuẩn hóa, kiểm tra kích thước và SHA-256 trong `scripts/fetch_datasets.jl`. Với Retail và T10I4D100K, ID được dịch một đơn vị khi dữ liệu chứa 0; quan hệ xuất hiện không đổi. `data/raw/` và output chạy mới không đưa vào Git.
 
-Để lặp Retail 100% trong ba tiến trình mới:
+**Lưu ý yêu cầu nộp bài:** nguồn benchmark hiện được tải trực tiếp từ FIMI; repository chưa có bản lưu trữ benchmark trên Hugging Face hoặc Kaggle như đề yêu cầu. Cần bổ sung link công khai trên một trong hai nền tảng và kiểm tra checksum trước khi nộp.
+
+## Thực nghiệm
 
 ```bash
-julia --startup-file=no --threads=1 --project=. scripts/measure_retail_processes.jl data/raw/benchmark/retail.txt result/benchmark_run/benchmark/retail_process_trials.csv
+julia --startup-file=no --threads=1 --project=. scripts/run_benchmark.jl data/raw/benchmark result/benchmark tools/spmf.jar configs/benchmark.toml
+julia --project=evaluation_environment scripts/plot_results.jl benchmark result/benchmark
 ```
 
-[Bộ kết quả tham chiếu](result/final/README.md) có đủ 20 cấu hình khớp từng itemset/support với SPMF. Runtime Julia là median của `mine()` sau warm-up; SPMF dùng thời gian nội bộ do JVM báo. Peak RSS bao gồm toàn bộ tiến trình Julia. Đọc [phạm vi đo và giới hạn](docs/results.md) khi so sánh các giá trị.
+Cấu hình trong `configs/benchmark.toml` dùng năm mức minsup cho từng bộ, ba lượt đo, seed 42, các tập con Retail 10%, 25%, 50%, 75%, 100%, và dữ liệu tổng hợp có độ dài giao dịch thay đổi. Pipeline so sánh itemset/support, runtime, số itemset, peak RSS giữa Basic/Optimized, scalability và độ dài giao dịch. Peak RSS đo toàn tiến trình Julia; thời gian SPMF là thời gian nội bộ Java nên phạm vi đo khác thời gian hàm `mine()` của Julia.
 
-## Groceries
+Theo báo cáo, hai bản khớp SPMF ở **20/20 cấu hình** benchmark đã đo. Tại minsup giữa, Basic/Optimized đạt 6,57× trên Chess, 9,52× trên Mushroom, 13,11× trên Retail và 41,86× trên T10I4D100K ở môi trường được mô tả trong báo cáo. Peak RSS của Optimized tăng 1,41% trên Mushroom; kết quả phụ thuộc dữ liệu và môi trường. Bảng số liệu, biểu đồ, giới hạn phép đo và hai hướng cải tiến nằm trong [báo cáo](docs/Report.pdf).
+
+## Ứng dụng 1: phân tích giỏ hàng
 
 ```bash
 julia --project=evaluation_environment scripts/fetch_datasets.jl groceries
-julia --project=. scripts/run_market_basket.jl data/raw/groceries/Groceries.data data/raw/groceries/Groceries.labels result/groceries_run 0.01 0.4 optimized
-julia --project=evaluation_environment scripts/plot_results.jl groceries result/groceries_run
+julia --project=. scripts/run_market_basket.jl data/raw/groceries/Groceries.data data/raw/groceries/Groceries.labels result/groceries 0.01 0.4 optimized
+julia --project=evaluation_environment scripts/plot_results.jl groceries result/groceries
 ```
 
-Hai ngưỡng lần lượt là minsup 1% và minconf 40%. Output gồm mapping, transactions, frequent itemsets, luật và top 10 theo lift. Trên 9.835 giỏ và 169 danh mục, cấu hình này cho 333 itemsets và 62 luật. [Phân tích chỉ số và ý nghĩa kinh doanh](docs/results.md#groceries).
+Pipeline chuyển Groceries thành giao dịch, khai thác frequent itemsets và sinh luật với minsup 1%, minconf 40%; output gồm mapping, itemsets, luật và top 10 theo lift. Báo cáo ghi nhận 333 itemsets và 62 luật trên 9.835 giỏ. Luật đồng xuất hiện là giả thuyết mua kèm, không tự chứng minh quan hệ nhân quả.
 
-## Flowers-17
+## Ứng dụng 2: khai thác mẫu trực quan
 
 ```bash
-julia --project=visual_environment scripts/visual_pipeline.jl --words 8 --maximum-descriptors 100 --seed 42 --minsup 0.7,0.8,0.9 --output result/flowers_k8_run
-julia --project=visual_environment scripts/visual_pipeline.jl --words 16 --maximum-descriptors 40 --seed 42 --minsup 0.7,0.8,0.9 --output result/flowers_k16_run
+julia --project=visual_environment scripts/visual_pipeline.jl --words 8 --maximum-descriptors 100 --seed 42 --minsup 0.7,0.8,0.9 --output result/flowers_k8
+julia --project=visual_environment scripts/visual_pipeline.jl --words 16 --maximum-descriptors 40 --seed 42 --minsup 0.7,0.8,0.9 --output result/flowers_k16
+julia --project=. scripts/verify_visual_results.jl result/flowers_k8
 ```
 
-Pipeline tự tải ảnh nếu chưa có, trích ORB descriptors, tạo codebook K-Means và chuyển mỗi ảnh thành một transaction. Có thể thêm `--limit 20` để chạy thử hoặc `--images <thư_mục>` để dùng ảnh đã giải nén. Ảnh không có descriptor vẫn được giữ trong mẫu số support.
+Pipeline trích ORB descriptors, xây codebook bằng K-Means và chuyển mỗi ảnh thành một giao dịch visual words trước khi khai thác bằng Apriori-TID. Ảnh không có descriptor vẫn được tính trong mẫu số support. Thêm `--limit 20` để thử nhanh hoặc `--images <thư_mục>` để dùng ảnh đã có. Hai cấu hình thay đổi đồng thời số cụm và số descriptor, nên không tách riêng ảnh hưởng từng tham số.
 
-```bash
-julia --project=. scripts/verify_visual_results.jl result/flowers_k8_run
-```
+## Notebook và tái lập
 
-Lệnh kiểm tra đếm lại support từ giao dịch và đối chiếu Basic. [Hướng dẫn, kết quả và giới hạn biểu diễn ảnh](docs/visual-patterns.md).
-
-## Notebook và Colab
-
-- [Demo chung](notebooks/demo.ipynb): thiết lập môi trường, test, bốn ca correctness, benchmark và hai ứng dụng.
-- [Demo benchmark/Groceries](notebooks/phat_demo.ipynb): ví dụ thuật toán, kết quả benchmark và luật kết hợp.
-- [Mở nhánh main trên Colab](https://colab.research.google.com/github/torusama/apriori-tid-mining/blob/main/notebooks/demo.ipynb). Link dùng mã của nhánh đang công bố; khi dùng một bản sao local, cần cung cấp source cùng phiên bản cho runtime.
-
-Mặc định `run_full_benchmark = False` hiển thị số đo lưu sẵn từ máy Mac. Đặt `True` để đo trên runtime đang chạy. Bốn ca đối chiếu nhanh và hai ứng dụng luôn được thực thi. [Notebook có output](result/final/colab/demo-executed.ipynb) và [log 10/10 cell](result/final/colab/run-all.txt) là bằng chứng lượt Colab riêng; thông tin nguồn/môi trường được giữ trong metadata.
-
-## Báo cáo
-- [docs/Report.pdf](docs/Report.pdf)
-- [Overleaf source code](https://www.overleaf.com/project/6b0597a68fc2d2db841ba4bc/share#1b99371ae9a10fbc01a5af92194ec576e0330a52c31bd9bc)
+Notebook tự chuẩn bị Julia/Java khi cần trên Colab, cài môi trường, chạy bộ test, đối chiếu nhanh bốn benchmark và chạy cả hai ứng dụng. Đặt `run_full_benchmark = True` tại mục 4.2 để chạy đầy đủ thí nghiệm và tạo biểu đồ; mặc định mục này được bỏ qua vì tốn thời gian. Các kết quả mới nằm trong workspace tạm được notebook in ra. Số đo trong báo cáo thuộc môi trường thực nghiệm cũ và không phải số đo Colab hiện tại.
 
 ## Cấu trúc
 
 ```text
-src/                      Thuật toán, ứng dụng và công cụ đánh giá
-scripts/                  CLI tải dữ liệu, benchmark, kiểm tra và vẽ
-configs/                  Cấu hình benchmark
-data/toy/                 Dữ liệu mẫu
-tests/                   Điểm chạy, bộ kiểm thử và fixtures
-evaluation_environment/   Dependencies tải dữ liệu và biểu đồ
-visual_environment/       Dependencies ORB và K-Means
-notebooks/                Notebook demo
-result/final/             CSV, hình và bằng chứng thực nghiệm
-docs/Report.pdf           Báo cáo
-tools/spmf.jar            Công cụ tham chiếu SPMF
+src/                     Thuật toán, ứng dụng và đánh giá
+scripts/                 CLI, tải dữ liệu, benchmark, vẽ và kiểm tra
+configs/                 Cấu hình benchmark
+notebooks/demo.ipynb     Notebook demo Colab
+test/runtests.jl         Điểm chạy test đầy đủ
+tests/                   Test và dữ liệu fixture
+data/toy/                Dữ liệu ví dụ
+evaluation_environment/ Môi trường tải dữ liệu và vẽ
+visual_environment/     Môi trường xử lý ảnh
+tools/spmf.jar           Cài đặt SPMF tham chiếu
+docs/Report.pdf          Báo cáo
 ```

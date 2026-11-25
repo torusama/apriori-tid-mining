@@ -23,7 +23,9 @@ data/raw/
 __pycache__/
 
 # Không bỏ qua Project.toml hoặc Manifest.toml hợp lệ.
-# Không bỏ qua toàn bộ thư mục data/ và result/.
 
 openspec/
 misc/
+
+# Generated output
+result/

@@ -1,9 +1,0 @@
-transactions = 9835
-items = 169
-duplicate_baskets = 2824
-mean_basket_length = 4.409456024402644
-minimum_support = 0.01
-minconf = 0.4
-implementation = "optimized"
-itemsets = 333
-rules = 62

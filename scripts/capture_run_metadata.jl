@@ -10,7 +10,7 @@ function capture_run_metadata(output_directory)
              "scripts/run_benchmark.jl", "scripts/measure_retail_processes.jl", "scripts/run_market_basket.jl",
              "scripts/visual_pipeline.jl"]
     for directory in ("src/algorithm", "src/applications", "src/evaluation")
-        append!(files, [joinpath(directory, name) for name in readdir(joinpath(project, directory))
+        append!(files, [replace(joinpath(directory, name), '\\' => '/') for name in readdir(joinpath(project, directory))
                         if endswith(name, ".jl")])
     end
     hashes = Dict(file => bytes2hex(open(sha256, joinpath(project, file))) for file in sort!(unique(files)))
@@ -26,7 +26,7 @@ function capture_run_metadata(output_directory)
         "benchmark_config" => "configs/benchmark.toml",
         "source_files_sha256" => hashes,
         "dataset_checksums" => "benchmark/datasets.csv",
-        "test_log" => "../correctness/final-tests.txt",
+        "test_log" => "final-tests.txt",
         "runtime_scope" => "Julia median warmed mine(); SPMF median internal reported time",
         "memory_scope" => "Peak RSS of a fresh Julia CLI, including input and output"
     )
