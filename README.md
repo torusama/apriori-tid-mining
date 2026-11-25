@@ -1,4 +1,4 @@
-﻿# Apriori-TID Mining
+# Apriori-TID Mining
 
 Project 02 — Khai phá dữ liệu, Nhóm 17, Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM.
 
@@ -117,7 +117,7 @@ Pipeline trích ORB descriptors, xây codebook bằng K-Means và chuyển mỗi
 
 ## Notebook và tái lập
 
-Notebook tự chuẩn bị Julia/Java khi cần trên Colab, cài môi trường, chạy bộ test, đối chiếu nhanh bốn benchmark và chạy cả hai ứng dụng. Đặt `run_full_benchmark = True` tại mục 4.2 để chạy đầy đủ thí nghiệm và tạo biểu đồ; mặc định mục này được bỏ qua vì tốn thời gian. Các kết quả mới nằm trong workspace tạm được notebook in ra. Số đo trong báo cáo thuộc môi trường thực nghiệm cũ và không phải số đo Colab hiện tại.
+Notebook tự chuẩn bị Julia/Java khi cần trên Colab, cài môi trường, chạy bộ test, đối chiếu nhanh bốn benchmark và chạy cả hai ứng dụng. Mặc định `run_full_benchmark = True` tại mục 4.2 để chạy đầy đủ thí nghiệm và tạo biểu đồ; đặt `False` để bỏ qua bước này khi cần chạy nhanh. Các kết quả mới nằm trong workspace tạm được notebook in ra. Số đo trong báo cáo thuộc môi trường thực nghiệm cũ và không phải số đo Colab hiện tại.
 
 ## Cấu trúc
 
