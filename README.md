@@ -130,8 +130,6 @@ julia --project=evaluation_environment scripts/fetch_datasets.jl all
 
 Script tải benchmark và Groceries vào `data/raw/`; Flowers-17 được pipeline ảnh tự tải. Benchmark được chuẩn hóa, kiểm tra kích thước và SHA-256 trong `scripts/fetch_datasets.jl`. Với Retail và T10I4D100K, ID được dịch một đơn vị khi dữ liệu chứa 0; quan hệ xuất hiện không đổi. `data/raw/` và output chạy mới không đưa vào Git.
 
-Theo Q&A của TA, nhóm có thể tải benchmark trực tiếp từ FIMI. Notebook tự tải và kiểm tra checksum; Hugging Face/Kaggle là phương án lưu trữ dự phòng được khuyến khích để tăng độ sẵn sàng, không phải điều kiện bắt buộc theo phần giải đáp này.
-
 ## Thực nghiệm
 
 ```bash
