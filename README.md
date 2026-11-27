@@ -1,6 +1,6 @@
 # Apriori-TID Mining
 
-Project 02 — Khai phá dữ liệu, Nhóm 17, Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM.
+Nhóm 17, Project 02 — Khai thác dữ liệu và ứng dụng - 24KHMT1, Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM.
 
 | Thành viên | MSSV |
 |---|---|
@@ -10,11 +10,11 @@ Project 02 — Khai phá dữ liệu, Nhóm 17, Trường Đại học Khoa họ
 Dự án cài đặt thuật toán khai thác tập phổ biến **Apriori-TID** bằng Julia dựa trên bài báo [Fast Algorithms for Mining Association Rules](https://www.vldb.org/conf/1994/P487.PDF). Hai phiên bản `basic` và `optimized` dùng chung bước sinh ứng viên và được đối chiếu từng itemset, support count với [SPMF](https://www.philippe-fournier-viger.com/spmf/AprioriTID.php). Bản tối ưu dùng ID nguyên, chỉ mục theo tập sinh và mảng đánh dấu để giảm công việc đếm trong các bản ghi trung gian.
 
 - [Báo cáo PDF](docs/Report.pdf): cài đặt, thí nghiệm, phân tích và hai ứng dụng.
-- [Mở notebook demo trên Google Colab](https://colab.research.google.com/github/torusama/apriori-tid-mining/blob/main/notebooks/demo.ipynb) · [Notebook trong repo](notebooks/demo.ipynb).
+- [Mở notebook demo trên Google Colab](https://colab.research.google.com/github/torusama/apriori-tid-mining/blob/main/notebooks/demo_colab.ipynb) · [Notebook trong repo](notebooks/demo_colab.ipynb).
 
 ## Cài đặt
 
-Cần Julia 1.9 trở lên; Java 25 trở lên để chạy SPMF và bộ test đầy đủ. Môi trường có internet khi cài dependencies và tải dữ liệu. Các lệnh dưới đây chạy tại thư mục gốc repository:
+Cần Julia 1.9 trở lên; Java 25 trở lên để chạy SPMF và bộ test đầy đủ. Đo peak RAM trên Linux cần GNU `time` tại `/usr/bin/time` (Ubuntu/Debian: `sudo apt-get install time`); notebook Colab tự cài nếu thiếu. Môi trường có internet khi cài dependencies và tải dữ liệu. Các lệnh dưới đây chạy tại thư mục gốc repository:
 
 ```bash
 julia --version
@@ -25,6 +25,20 @@ julia --project=visual_environment -e 'using Pkg; Pkg.instantiate()'
 ```
 
 Môi trường gốc chứa thuật toán, CLI và test; `evaluation_environment` dùng để tải dữ liệu và vẽ biểu đồ; `visual_environment` chứa các thư viện ảnh, ORB và K-Means. File `tools/spmf.jar` là chương trình tham chiếu, không dùng để tạo kết quả của hai ứng dụng.
+
+<details>
+<summary>macOS/Homebrew: cấu hình thư viện cho GR/FFMPEG</summary>
+
+Nếu Julia từ Homebrew báo thiếu `libssl.3.dylib` hoặc xung đột zlib khi vẽ hình, cài OpenSSL 3 và khởi chạy Jupyter với đường dẫn thư viện sau:
+
+```bash
+brew install openssl@3
+DYLD_FALLBACK_LIBRARY_PATH="$(brew --prefix openssl@3)/lib:/usr/lib" jupyter lab notebooks/demo_local.ipynb
+```
+
+Lượt Run All local trên macOS được kiểm tra với cấu hình thư viện này. Colab không cần thiết lập biến này.
+
+</details>
 
 ## Chạy khai thác
 
@@ -67,6 +81,40 @@ Full test suite completed successfully.
 
 Tổng cộng **168/168** kiểm tra trong 16 testset đạt, mã thoát 0. Test cố ý đọc ảnh JPEG hỏng có thể in thông báo lỗi của các thư viện đọc ảnh dù test đạt.
 
+### Kiểm thử bản hiện tại
+
+Chạy trên mã nền `acd5a4b`, macOS, Julia 1.13.4 và OpenJDK 27 bằng:
+
+```bash
+julia --startup-file=no --threads=1 --project=. test/runtests.jl
+```
+
+<details>
+<summary>Output: 168/168 kiểm tra, 16 testset, exit 0</summary>
+
+```text
+TASK 00 - Base functions |   19     19  2.2s
+Exact minimum support boundary |    7      7  0.2s
+TASK 01 - Candidate generation |    6      6  0.2s
+TASK 01 - Intermediate transaction records |    9      9  0.2s
+TASK 02 - Five toy databases |    7      7  0.2s
+TASK 02 - VLDB 1994 Figure 3 |    1      1  0.0s
+TASK 02 - Boundary cases |    3      3  0.0s
+TASK 03 - Optimized Apriori-TID |   30     30  0.3s
+Independent support counts |    6      6  0.2s
+TASK 02 - SPMF file input and output |   11     11  0.3s
+TASK 02 - Command line interface |   12     12  0.3s
+TASK 02 - SPMF comparator |    6      6  0.2s
+TASK 02 - SPMF integration |   19     19  2.7s
+Groceries mapping and association-rule metrics |   15     15  1.0s
+Visual patterns preserve empty image transactions |   10     10  0.2s
+Image descriptors and visual codebook |    7      7  8.8s
+Full test suite completed successfully.
+Exit code: 0
+```
+
+</details>
+
 ## Dữ liệu
 
 | Dataset | Công dụng | Nguồn công khai |
@@ -82,7 +130,7 @@ julia --project=evaluation_environment scripts/fetch_datasets.jl all
 
 Script tải benchmark và Groceries vào `data/raw/`; Flowers-17 được pipeline ảnh tự tải. Benchmark được chuẩn hóa, kiểm tra kích thước và SHA-256 trong `scripts/fetch_datasets.jl`. Với Retail và T10I4D100K, ID được dịch một đơn vị khi dữ liệu chứa 0; quan hệ xuất hiện không đổi. `data/raw/` và output chạy mới không đưa vào Git.
 
-**Lưu ý yêu cầu nộp bài:** nguồn benchmark hiện được tải trực tiếp từ FIMI; repository chưa có bản lưu trữ benchmark trên Hugging Face hoặc Kaggle như đề yêu cầu. Cần bổ sung link công khai trên một trong hai nền tảng và kiểm tra checksum trước khi nộp.
+Theo Q&A của TA, nhóm có thể tải benchmark trực tiếp từ FIMI. Notebook tự tải và kiểm tra checksum; Hugging Face/Kaggle là phương án lưu trữ dự phòng được khuyến khích để tăng độ sẵn sàng, không phải điều kiện bắt buộc theo phần giải đáp này.
 
 ## Thực nghiệm
 
@@ -117,7 +165,12 @@ Pipeline trích ORB descriptors, xây codebook bằng K-Means và chuyển mỗi
 
 ## Notebook và tái lập
 
-Notebook tự chuẩn bị Julia/Java khi cần trên Colab, cài môi trường, chạy bộ test, đối chiếu nhanh bốn benchmark và chạy cả hai ứng dụng. Mặc định `run_full_benchmark = True` tại mục 4.2 để chạy đầy đủ thí nghiệm và tạo biểu đồ; đặt `False` để bỏ qua bước này khi cần chạy nhanh. Các kết quả mới nằm trong workspace tạm được notebook in ra. Số đo trong báo cáo thuộc môi trường thực nghiệm cũ và không phải số đo Colab hiện tại.
+- [Bản local](notebooks/demo_local.ipynb): dùng checkout hiện có và Julia/Java đã cài đặt.
+- [Bản Colab](notebooks/demo_colab.ipynb): tự chuẩn bị source và runtime trên Colab.
+- Hai bản dùng chung các cell demo; khác nhau ở cell khởi tạo môi trường. Bản local dùng kernel Python 3 trong Jupyter/IPython và yêu cầu Julia/Java đã có trong PATH.
+
+
+Notebook tự chuẩn bị Julia/Java khi cần trên Colab, cài môi trường, chạy bộ test, đối chiếu nhanh bốn benchmark và chạy cả hai ứng dụng. Lần đầu cài và precompile dependencies trên Colab CPU có thể mất hơn 10 phút; cần chờ cell khởi tạo hoàn tất trước khi chạy các cell sau. Mặc định `run_full_benchmark = True` tại mục 4.2 để chạy đầy đủ thí nghiệm và tạo biểu đồ; đặt `False` để bỏ qua bước này khi cần chạy nhanh. Các kết quả mới nằm trong workspace tạm được notebook in ra. Số đo trong báo cáo thuộc môi trường thực nghiệm được ghi trong báo cáo và không phải số đo Colab hiện tại. K-Means có thể tạo codebook khác giữa phiên bản Julia/BLAS; cần kiểm tra support trên transaction/codebook của từng lượt và không đối chiếu ID visual word giữa các codebook khác nhau.
 
 ## Cấu trúc
 
@@ -125,7 +178,8 @@ Notebook tự chuẩn bị Julia/Java khi cần trên Colab, cài môi trường
 src/                     Thuật toán, ứng dụng và đánh giá
 scripts/                 CLI, tải dữ liệu, benchmark, vẽ và kiểm tra
 configs/                 Cấu hình benchmark
-notebooks/demo.ipynb     Notebook demo Colab
+notebooks/demo_colab.ipynb     Notebook demo Colab
+notebooks/demo_local.ipynb     Notebook demo local
 test/runtests.jl         Điểm chạy test đầy đủ
 tests/                   Test và dữ liệu fixture
 data/toy/                Dữ liệu ví dụ
